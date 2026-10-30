@@ -12,6 +12,11 @@ export const demoChallenges: Challenge[] = [
       { input: "[[2,7,11,15],9]", expected: "[0,1]" },
       { input: "[[3,2,4],6]", expected: "[1,2]" },
     ],
+    random_test_config: {
+      cases_per_run: 5,
+      generator: "const a = 1 + Math.floor(Math.random() * 50); const b = 60 + Math.floor(Math.random() * 40); return [[a, b, 200, 350, 500], a + b];",
+      oracle: "return [0, 1];",
+    },
   },
   {
     id: "00000000-0000-4000-8000-000000000002",
@@ -24,6 +29,11 @@ export const demoChallenges: Challenge[] = [
       { input: '[["W","W","L","W"]]', expected: "2" },
       { input: '[["W","W","W"]]', expected: "3" },
     ],
+    random_test_config: {
+      cases_per_run: 5,
+      generator: "const length = 5 + Math.floor(Math.random() * 12); return [Array.from({ length }, () => Math.random() < 0.6 ? 'W' : 'L')];",
+      oracle: "let best = 0, current = 0; for (const result of args[0]) { current = result === 'W' ? current + 1 : 0; best = Math.max(best, current); } return best;",
+    },
   },
   {
     id: "00000000-0000-4000-8000-000000000003",
@@ -36,5 +46,10 @@ export const demoChallenges: Challenge[] = [
       { input: "[[1200,1250,1299]]", expected: "true" },
       { input: "[[900,1200]]", expected: "false" },
     ],
+    random_test_config: {
+      cases_per_run: 5,
+      generator: "const base = 500 + Math.floor(Math.random() * 2000); const spread = Math.floor(Math.random() * 180); return [[base, base + Math.floor(spread / 2), base + spread]];",
+      oracle: "return Math.max(...args[0]) - Math.min(...args[0]) <= 100;",
+    },
   },
 ];

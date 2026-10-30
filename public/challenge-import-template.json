@@ -8,6 +8,11 @@
       "difficulty": "Easy",
       "initial_code": "function solve(numbers) {\n  // Zwróć sumę dodatnich liczb\n  \n}",
       "tests_per_run": 3,
+      "random_tests": {
+        "cases_per_run": 5,
+        "generator": "const length = 3 + Math.floor(Math.random() * 8);\nconst numbers = Array.from({ length }, () => Math.floor(Math.random() * 101) - 50);\nreturn [numbers];",
+        "oracle": "return args[0].filter(number => number > 0).reduce((sum, number) => sum + number, 0);"
+      },
       "test_cases": [
         { "input": "[[1,-2,3]]", "expected": "4" },
         { "input": "[[-5,-1]]", "expected": "0" },

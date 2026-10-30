@@ -135,10 +135,27 @@ export function Arena() {
       setResults([{ ok: false, label: "Kod nie uruchomił się", time: 0 }]);
       return false;
     }
-    const randomizedTests = [...selected.test_cases]
+    let testsForThisRun = [...selected.test_cases]
       .sort(() => Math.random() - 0.5)
       .slice(0, Math.max(1, Math.min(selected.tests_per_run ?? 2, selected.test_cases.length)));
-    const next = randomizedTests.map((test, index) => {
+    if (selected.random_test_config) {
+      try {
+        const generator = new Function(`"use strict"; ${selected.random_test_config.generator}`) as () => unknown[];
+        const oracle = new Function("args", `"use strict"; ${selected.random_test_config.oracle}`) as (args: unknown[]) => unknown;
+        testsForThisRun = Array.from({ length: selected.random_test_config.cases_per_run }, () => {
+          const args = generator();
+          if (!Array.isArray(args)) throw new Error("Generator musi zwracać tablicę argumentów");
+          return { input: JSON.stringify(args), expected: JSON.stringify(oracle(args)) };
+        });
+        logs.push(`Wygenerowano ${testsForThisRun.length} nowych zestawów danych.`);
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Błąd generatora";
+        setConsoleLines([...logs, `[BŁĄD GENERATORA] ${message}`]);
+        setResults([{ ok: false, label: "Generator testów jest niepoprawny", time: 0 }]);
+        return false;
+      }
+    }
+    const next = testsForThisRun.map((test, index) => {
       try {
         const args = JSON.parse(test.input) as unknown[];
         logs.push("", `--- TEST ${index + 1} ---`);
