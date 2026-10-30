@@ -1,2 +1,2 @@
-import { Arena } from "@/components/arena";
-export default function HomePage() { return <Arena />; }
+import { LandingPage } from "@/components/landing-page";
+export default function HomePage() { return <LandingPage />; }

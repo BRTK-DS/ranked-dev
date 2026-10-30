@@ -53,7 +53,6 @@ export function Arena() {
   const [combo, setCombo] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   useEffect(() => {
-    if (!session) return;
     const db = getSupabaseBrowserClient();
     void db
       .from("challenges")
@@ -67,11 +66,14 @@ export function Arena() {
             );
             return beginnerVersion ?? challenge;
           });
+          const requestedId = new URLSearchParams(window.location.search).get("challenge");
+          const initial = localized.find((challenge) => challenge.id === requestedId) ?? localized[0];
           setChallenges(localized);
-          setSelected(localized[0]);
-          setCode(localized[0].initial_code);
+          setSelected(initial);
+          setCode(initial.initial_code);
         }
       });
+    if (!session) return;
     void db
       .from("submissions")
       .select(
