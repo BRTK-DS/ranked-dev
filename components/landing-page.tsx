@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Braces, CheckCircle2, Code2, Languages, Layers3, Play, Sparkles, TerminalSquare, Trophy } from "lucide-react";
+import { ArrowRight, Braces, CheckCircle2, Code2, Dices, Dumbbell, Languages, Layers3, Play, Shield, Sparkles, Swords, TerminalSquare, Trophy, Zap } from "lucide-react";
 import { useAuth } from "./auth-provider";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
@@ -24,6 +25,10 @@ const copy = {
     open: "Rozpocznij", empty: "Brak zadań dla wybranych filtrów.", howTitle: "Od zadania do rozwiązania", howIntro: "Krótka pętla informacji zwrotnej pomaga skupić się na praktyce.",
     steps: [["01", "Wybierz wyzwanie", "Filtruj zadania według formatu i poziomu trudności."], ["02", "Napisz rozwiązanie", "Pracuj w edytorze albo uzupełnij wskazane luki."], ["03", "Uruchom testy", "Zobacz wynik, popraw kod i buduj serię zaliczonych zadań."]],
     footer: "Gotowy na następne zadanie?", footerText: "Wejdź do areny i sprawdź się na działającym kodzie.", signIn: "Zaloguj się", admin: "Panel admina", tasks: "zadań",
+    modeEyebrow: "WYBIERZ TRYB", modeTitle: "Jak chcesz dziś kodować?", modeIntro: "Każdy tryb prowadzi do prawdziwego zadania, ale daje inny poziom presji i kontroli.",
+    randomTitle: "Losowe zadanie", randomText: "Zdaj się na los i od razu przejdź do jednego z dostępnych wyzwań.", randomCta: "Wylosuj teraz",
+    rankedTitle: "Rozgrywka rankingowa", rankedText: "Zmierz się z wymagającym zadaniem i walcz o serię, XP oraz pozycję.", rankedCta: "Graj rankingowo",
+    trainingTitle: "Trening", trainingText: "Ćwicz we własnym tempie. Zacznij od łatwego zadania i testuj bez presji.", trainingCta: "Rozpocznij trening",
   },
   en: {
     navChallenges: "Challenges", navHow: "How it works", arena: "Enter the arena", eyebrow: "LEARN BY BUILDING",
@@ -34,12 +39,17 @@ const copy = {
     open: "Start", empty: "No challenges match these filters.", howTitle: "From prompt to solution", howIntro: "A short feedback loop keeps the focus on hands-on practice.",
     steps: [["01", "Choose a challenge", "Filter tasks by format and difficulty."], ["02", "Build a solution", "Work in the editor or complete the highlighted gaps."], ["03", "Run the tests", "Review feedback, improve your code, and build a streak."]],
     footer: "Ready for the next challenge?", footerText: "Enter the arena and put your code to the test.", signIn: "Sign in", admin: "Admin panel", tasks: "challenges",
+    modeEyebrow: "CHOOSE YOUR MODE", modeTitle: "How do you want to code today?", modeIntro: "Every mode opens a real challenge, with a different balance of pressure and control.",
+    randomTitle: "Random challenge", randomText: "Leave the choice to chance and jump straight into an available challenge.", randomCta: "Roll a challenge",
+    rankedTitle: "Ranked match", rankedText: "Take on a tougher task and compete for streaks, XP, and position.", rankedCta: "Play ranked",
+    trainingTitle: "Training", trainingText: "Practice at your own pace. Start easy and test solutions without pressure.", trainingCta: "Start training",
   },
 } as const;
 
 const difficultyStyle = { Easy: "border-emerald-500/30 text-emerald-300", Medium: "border-amber-500/30 text-amber-300", Hard: "border-rose-500/30 text-rose-300" };
 
 export function LandingPage() {
+  const router = useRouter();
   const { session, profile } = useAuth();
   const [language, setLanguage] = useState<Language>("pl");
   const [challenges, setChallenges] = useState<Challenge[]>(demoChallenges);
@@ -51,6 +61,12 @@ export function LandingPage() {
   useEffect(() => { void getSupabaseBrowserClient().from("challenges").select("*").order("created_at").then(({ data }) => { if (data?.length) setChallenges(data as Challenge[]); }); }, []);
   const filtered = useMemo(() => challenges.filter((challenge) => (format === "all" || (challenge.challenge_type ?? "code") === format) && (level === "all" || challenge.difficulty === level)), [challenges, format, level]);
   function switchLanguage() { const next = language === "pl" ? "en" : "pl"; setLanguage(next); window.localStorage.setItem("ranked-language", next); }
+  function openRandom(mode: "random" | "ranked" | "training") {
+    const pool = mode === "training" ? challenges.filter((item) => item.difficulty === "Easy") : mode === "ranked" ? challenges.filter((item) => item.difficulty !== "Easy") : challenges;
+    const challenge = pool[Math.floor(Math.random() * pool.length)] ?? challenges[0];
+    if (mode === "ranked" && !session) { window.sessionStorage.setItem("ranked-return", challenge ? `/arena?challenge=${challenge.id}&mode=ranked` : "/arena?mode=ranked"); router.push("/auth"); return; }
+    router.push(challenge ? `/arena?challenge=${encodeURIComponent(challenge.id)}&mode=${mode}` : `/arena?mode=${mode}`);
+  }
 
   return <main className="min-h-screen overflow-hidden bg-[#080a0d] text-zinc-100">
     <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_18%_5%,rgba(52,211,153,.10),transparent_28%),radial-gradient(circle_at_85%_30%,rgba(34,211,238,.07),transparent_24%)]" />
@@ -60,21 +76,22 @@ export function LandingPage() {
       <div className="flex items-center gap-2"><Button variant="ghost" size="sm" onClick={switchLanguage} aria-label="Switch language"><Languages className="size-4" />{language.toUpperCase()}</Button><Button asChild size="sm"><Link href={session ? "/arena" : "/auth"}>{session ? t.arena : t.signIn}<ArrowRight className="size-4" /></Link></Button></div>
     </div></header>
 
-    <section className="relative mx-auto grid min-h-[690px] max-w-7xl items-center gap-12 px-5 py-20 lg:grid-cols-[1.05fr_.95fr] lg:px-8">
-      <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .5 }}>
+    <section className="relative mx-auto min-h-[650px] max-w-7xl px-5 pb-20 pt-24 text-center lg:px-8 lg:pt-32">
+      <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .5 }} className="mx-auto max-w-4xl">
         <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/5 px-3 py-1.5 text-[11px] font-bold tracking-[.18em] text-emerald-300"><Sparkles className="size-3.5" />{t.eyebrow}</div>
-        <h1 className="max-w-3xl text-5xl font-black leading-[.95] tracking-[-.055em] sm:text-7xl"><span className="block">{t.titleA}</span><span className="block bg-gradient-to-r from-emerald-300 to-cyan-300 bg-clip-text text-transparent">{t.titleB}</span></h1>
-        <p className="mt-7 max-w-xl text-base leading-7 text-zinc-400 sm:text-lg">{t.intro}</p>
-        <div className="mt-9 flex flex-wrap gap-3"><Button asChild className="h-12 px-6"><a href="#challenges"><Play className="size-4 fill-current" />{t.start}</a></Button><Button asChild className="h-12 px-6" variant="outline"><Link href="/arena">{t.arena}<ArrowRight className="size-4" /></Link></Button></div>
-        <div className="mt-10 flex gap-8 text-sm text-zinc-500"><span><strong className="block text-2xl text-zinc-100">{challenges.length}</strong>{t.tasks}</span><span><strong className="block text-2xl text-zinc-100">2</strong>{language === "pl" ? "formaty" : "formats"}</span><span><strong className="block text-2xl text-zinc-100">3</strong>{language === "pl" ? "poziomy" : "levels"}</span></div>
+        <h1 className="text-5xl font-black leading-[.95] tracking-[-.055em] sm:text-7xl lg:text-8xl"><span>{t.titleA} </span><span className="bg-gradient-to-r from-emerald-300 via-cyan-300 to-emerald-300 bg-clip-text text-transparent">{t.titleB}</span></h1>
+        <p className="mx-auto mt-7 max-w-2xl text-base leading-7 text-zinc-400 sm:text-lg">{t.intro}</p>
+        <div className="mt-9 flex flex-wrap justify-center gap-3"><Button className="h-12 px-6" onClick={() => openRandom("random")}><Dices className="size-4" />{t.randomCta}</Button><Button asChild className="h-12 px-6" variant="outline"><a href="#modes">{t.modeEyebrow}<ArrowRight className="size-4" /></a></Button></div>
       </motion.div>
-      <motion.div initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: .55, delay: .1 }} className="relative">
-        <div className="absolute -inset-6 rounded-[2rem] bg-emerald-400/5 blur-2xl" /><div className="relative overflow-hidden rounded-2xl border border-white/10 bg-[#0d1014] shadow-2xl shadow-black/40">
-          <div className="flex items-center justify-between border-b border-white/5 px-4 py-3"><div className="flex gap-1.5"><span className="size-2.5 rounded-full bg-rose-400/70"/><span className="size-2.5 rounded-full bg-amber-300/70"/><span className="size-2.5 rounded-full bg-emerald-400/70"/></div><span className="font-mono text-[10px] text-zinc-600">challenge.js</span></div>
-          <pre className="overflow-x-auto p-6 font-mono text-xs leading-7 sm:p-8 sm:text-sm"><code><span className="text-fuchsia-300">function</span> <span className="text-cyan-300">solve</span><span className="text-zinc-300">(numbers) {'{'}</span>{"\n"}  <span className="text-zinc-500">// Your solution starts here</span>{"\n"}  <span className="text-fuchsia-300">return</span> <span className="text-zinc-300">numbers</span>{"\n"}    <span className="text-zinc-300">.filter(n </span><span className="text-cyan-300">=&gt;</span><span className="text-zinc-300"> n &gt; 0)</span>{"\n"}    <span className="text-zinc-300">.reduce((sum, n) </span><span className="text-cyan-300">=&gt;</span><span className="text-zinc-300"> sum + n, 0);</span>{"\n"}<span className="text-zinc-300">{'}'}</span></code></pre>
-          <div className="border-t border-white/5 bg-black/30 p-4 font-mono text-xs"><p className="text-zinc-500">&gt; Running public tests...</p><p className="mt-2 text-emerald-300">✓ Test 1 passed&nbsp;&nbsp; ✓ Test 2 passed</p></div>
-        </div>
-      </motion.div>
+      <div className="mx-auto mt-16 grid max-w-3xl grid-cols-3 divide-x divide-white/10 rounded-2xl border border-white/8 bg-white/[.025] py-5 text-sm text-zinc-500 backdrop-blur"><span><strong className="block text-2xl text-zinc-100">{challenges.length}</strong>{t.tasks}</span><span><strong className="block text-2xl text-zinc-100">2</strong>{language === "pl" ? "formaty" : "formats"}</span><span><strong className="block text-2xl text-zinc-100">3</strong>{language === "pl" ? "poziomy" : "levels"}</span></div>
+    </section>
+
+    <section id="modes" className="relative mx-auto max-w-7xl px-5 pb-24 lg:px-8"><div className="mb-9 text-center"><p className="text-xs font-bold uppercase tracking-[.2em] text-emerald-400">{t.modeEyebrow}</p><h2 className="mt-3 text-3xl font-black sm:text-4xl">{t.modeTitle}</h2><p className="mx-auto mt-3 max-w-2xl text-zinc-400">{t.modeIntro}</p></div>
+      <div className="grid gap-4 lg:grid-cols-3">
+        <button onClick={() => openRandom("random")} className="group relative overflow-hidden rounded-2xl border border-cyan-500/20 bg-gradient-to-br from-cyan-500/10 to-[#0d1014] p-6 text-left transition hover:-translate-y-1 hover:border-cyan-400/50"><div className="flex items-start justify-between"><span className="grid size-12 place-items-center rounded-xl bg-cyan-400 text-zinc-950"><Dices className="size-6"/></span><Zap className="size-5 text-cyan-300"/></div><h3 className="mt-10 text-xl font-black">{t.randomTitle}</h3><p className="mt-3 min-h-12 text-sm leading-6 text-zinc-400">{t.randomText}</p><span className="mt-7 flex items-center gap-2 text-sm font-bold text-cyan-300">{t.randomCta}<ArrowRight className="size-4 transition group-hover:translate-x-1"/></span></button>
+        <button onClick={() => openRandom("ranked")} className="group relative overflow-hidden rounded-2xl border border-amber-500/20 bg-gradient-to-br from-amber-500/10 to-[#0d1014] p-6 text-left transition hover:-translate-y-1 hover:border-amber-400/50"><div className="flex items-start justify-between"><span className="grid size-12 place-items-center rounded-xl bg-amber-300 text-zinc-950"><Swords className="size-6"/></span><Shield className="size-5 text-amber-300"/></div><h3 className="mt-10 text-xl font-black">{t.rankedTitle}</h3><p className="mt-3 min-h-12 text-sm leading-6 text-zinc-400">{t.rankedText}</p><span className="mt-7 flex items-center gap-2 text-sm font-bold text-amber-300">{t.rankedCta}<ArrowRight className="size-4 transition group-hover:translate-x-1"/></span></button>
+        <button onClick={() => openRandom("training")} className="group relative overflow-hidden rounded-2xl border border-emerald-500/20 bg-gradient-to-br from-emerald-500/10 to-[#0d1014] p-6 text-left transition hover:-translate-y-1 hover:border-emerald-400/50"><div className="flex items-start justify-between"><span className="grid size-12 place-items-center rounded-xl bg-emerald-400 text-zinc-950"><Dumbbell className="size-6"/></span><Play className="size-5 text-emerald-300"/></div><h3 className="mt-10 text-xl font-black">{t.trainingTitle}</h3><p className="mt-3 min-h-12 text-sm leading-6 text-zinc-400">{t.trainingText}</p><span className="mt-7 flex items-center gap-2 text-sm font-bold text-emerald-300">{t.trainingCta}<ArrowRight className="size-4 transition group-hover:translate-x-1"/></span></button>
+      </div>
     </section>
 
     <section id="challenges" className="relative border-y border-white/5 bg-white/[.015] py-24"><div className="mx-auto max-w-7xl px-5 lg:px-8">

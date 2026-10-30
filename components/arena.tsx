@@ -52,8 +52,11 @@ export function Arena() {
   const [history, setHistory] = useState<Submission[]>([]);
   const [combo, setCombo] = useState(0);
   const [submitting, setSubmitting] = useState(false);
+  const [playMode, setPlayMode] = useState<"random" | "ranked" | "training" | "arena">("arena");
   useEffect(() => {
     const db = getSupabaseBrowserClient();
+    const requestedMode = new URLSearchParams(window.location.search).get("mode");
+    if (requestedMode === "random" || requestedMode === "ranked" || requestedMode === "training") setPlayMode(requestedMode);
     void db
       .from("challenges")
       .select("*")
@@ -387,6 +390,9 @@ export function Arena() {
                       <div className="flex items-center gap-2">
                         <Badge className={difficulty[selected.difficulty]}>
                           {selected.difficulty}
+                        </Badge>
+                        <Badge className={playMode === "ranked" ? "border-amber-500/30 bg-amber-500/10 text-amber-300" : playMode === "training" ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300" : "border-cyan-500/30 bg-cyan-500/10 text-cyan-300"}>
+                          {playMode === "ranked" ? "Ranked" : playMode === "training" ? "Training" : playMode === "random" ? "Random" : "Arena"}
                         </Badge>
                         <span className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-zinc-600">
                           <Gauge className="size-3" /> Ranked challenge
