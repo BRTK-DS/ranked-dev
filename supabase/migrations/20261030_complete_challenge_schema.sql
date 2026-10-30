@@ -17,6 +17,7 @@ update public.challenges set language = 'C#' where title ilike '[C#%' or initial
 update public.challenges set language = 'HTML' where title ilike '[HTML%';
 update public.challenges set language = 'XML' where title ilike '[XML%' or initial_code ilike '<?xml%';
 update public.challenges set language = 'XSLT' where title ilike '%XSLT%' or initial_code ilike '%xsl:stylesheet%' or initial_code ilike '%xsl:transform%';
+update public.challenges set language = 'XPath' where title ilike '%XPath%';
 update public.challenges set language = 'GraphQL' where title ilike '[GraphQL%';
 update public.challenges set language = 'SQL' where title ilike '[SQL%';
 

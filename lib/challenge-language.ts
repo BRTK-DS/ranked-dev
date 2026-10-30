@@ -11,6 +11,7 @@ const definitions: Record<string, { label: string; monaco: string; extension: st
   html: { label: "HTML", monaco: "html", extension: "html" },
   xml: { label: "XML", monaco: "xml", extension: "xml" },
   xslt: { label: "XSLT", monaco: "xml", extension: "xsl" },
+  xpath: { label: "XPath", monaco: "xml", extension: "xpath" },
   graphql: { label: "GraphQL", monaco: "graphql", extension: "graphql" },
   sql: { label: "SQL", monaco: "sql", extension: "sql" },
   json: { label: "JSON", monaco: "json", extension: "json" },
