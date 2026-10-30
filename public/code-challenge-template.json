@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "challenges": [
+    {
+      "type": "code",
+      "title": "Suma dodatnich liczb",
+      "description": "Dostajesz tablicę liczb. Zwróć sumę wyłącznie elementów większych od zera. Liczby ujemne i zero należy pominąć. Dla pustej tablicy zwróć 0.",
+      "difficulty": "Easy",
+      "briefing": {
+        "instructions": "Uzupełnij funkcję solve(numbers). Nie zmieniaj nazwy funkcji ani jej argumentu. Funkcja musi zwrócić liczbę, a nie wypisać ją przez console.log().",
+        "steps": [
+          "Przejdź po wszystkich elementach tablicy numbers.",
+          "Sprawdź, czy aktualna liczba jest większa od zera.",
+          "Dodaj do sumy wyłącznie liczby spełniające warunek.",
+          "Zwróć końcową sumę."
+        ],
+        "definition_of_done": [
+          "Funkcja nazywa się solve i przyjmuje jeden argument numbers.",
+          "Wynikiem jest liczba.",
+          "Liczby ujemne i zero są pomijane.",
+          "Pusta tablica zwraca 0.",
+          "Wszystkie testy kończą się statusem PASS."
+        ],
+        "hint": "Możesz użyć pętli for...of albo połączyć filter() z reduce()."
+      },
+      "initial_code": "function solve(numbers) {\n  // Zaimplementuj rozwiązanie i zwróć wynik.\n  \n}",
+      "tests_per_run": 3,
+      "test_cases": [
+        { "input": "[[1,-2,3]]", "expected": "4" },
+        { "input": "[[-5,-1]]", "expected": "0" },
+        { "input": "[[10,20,30]]", "expected": "60" },
+        { "input": "[[]]", "expected": "0" },
+        { "input": "[[0,5,-5,8]]", "expected": "13" }
+      ],
+      "random_tests": {
+        "cases_per_run": 5,
+        "generator": "const length = Math.floor(Math.random() * 10);\nconst numbers = Array.from({ length }, () => Math.floor(Math.random() * 101) - 50);\nreturn [numbers];",
+        "oracle": "return args[0].filter(number => number > 0).reduce((sum, number) => sum + number, 0);"
+      }
+    }
+  ]
+}

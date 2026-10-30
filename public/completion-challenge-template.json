@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "challenges": [
+    {
+      "type": "completion",
+      "title": "Filtrowanie aktywnych użytkowników",
+      "description": "Uzupełnij trzy luki w kodzie tak, aby funkcja wybrała wyłącznie aktywnych użytkowników, a następnie zwróciła tablicę zawierającą ich nazwy.",
+      "difficulty": "Easy",
+      "briefing": {
+        "instructions": "W każdej luce wpisz nazwę właściwej metody lub pola. Nie zmieniaj pozostałej części szablonu.",
+        "steps": [
+          "Użyj metody tablicowej wybierającej elementy spełniające warunek.",
+          "W warunku odwołaj się do pola określającego aktywność użytkownika.",
+          "Przekształć przefiltrowane obiekty w tablicę nazw."
+        ],
+        "definition_of_done": [
+          "Pierwsza luka filtruje tablicę użytkowników.",
+          "Druga luka wskazuje pole active lub isActive.",
+          "Trzecia luka mapuje użytkowników do ich nazw.",
+          "Każda luka zawiera jedną z akceptowanych odpowiedzi."
+        ],
+        "hint": "Potrzebne metody to filter() oraz map()."
+      },
+      "test_cases": [
+        {
+          "input": "[{\"name\":\"Ada\",\"active\":true},{\"name\":\"Jan\",\"active\":false}]",
+          "expected": "[\"Ada\"]"
+        },
+        {
+          "input": "[{\"name\":\"Ola\",\"active\":true},{\"name\":\"Ewa\",\"active\":true}]",
+          "expected": "[\"Ola\",\"Ewa\"]"
+        }
+      ],
+      "completion": {
+        "template": "function activeNames(users) {\n  return users.{{0}}(user => user.{{1}}).{{2}}(user => user.name);\n}",
+        "blanks": [
+          {
+            "slot": 0,
+            "label": "Metoda filtrująca tablicę",
+            "placeholder": "np. filter",
+            "accepted": ["filter"]
+          },
+          {
+            "slot": 1,
+            "label": "Pole określające aktywność",
+            "placeholder": "np. active",
+            "accepted": ["active", "isActive"]
+          },
+          {
+            "slot": 2,
+            "label": "Metoda zmieniająca elementy tablicy",
+            "placeholder": "np. map",
+            "accepted": ["map"]
+          }
+        ]
+      }
+    }
+  ]
+}

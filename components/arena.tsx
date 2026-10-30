@@ -672,17 +672,30 @@ export function Arena() {
 }
 
 function ChallengeBrief({ challenge }: { challenge: Challenge }) {
+  const briefing = challenge.briefing_config;
+  const steps = briefing?.steps ?? [
+    "Sprawdź, jakie argumenty otrzymuje funkcja w przykładach.",
+    "Napisz logikę rozwiązującą zadanie.",
+    "Zwróć odpowiedź słowem return. Sam console.log() nie zalicza zadania.",
+    "Kliknij Run tests i porównaj wynik w konsoli.",
+  ];
+  const definitionOfDone = briefing?.definition_of_done ?? [
+    "Funkcja ma właściwą nazwę i argumenty.",
+    "Funkcja zwraca wynik w wymaganym typie.",
+    "Kod nie zgłasza błędu podczas uruchomienia.",
+    "Wszystkie pokazane testy mają status PASS.",
+  ];
   return (
     <div className="mt-5 space-y-4 text-sm">
       <div className="rounded-lg border border-zinc-700 bg-zinc-950 p-4">
         <p className="mb-2 text-[10px] font-bold uppercase tracking-[.18em] text-emerald-400">
           Ticket / Co masz zrobić
         </p>
-        <p className="leading-6 text-zinc-300">{challenge.description}</p>
+        <p className="whitespace-pre-line leading-6 text-zinc-300">{challenge.description}</p>
         <p className="mt-3 leading-6 text-zinc-500">
-          Twoim zadaniem jest uzupełnić funkcję <code className="rounded bg-zinc-800 px-1.5 py-0.5 text-cyan-300">solve()</code>.
-          Nie zmieniaj jej nazwy. Testy uruchomią tę funkcję automatycznie i przekażą jej dane wejściowe.
+          {briefing?.instructions ?? "Twoim zadaniem jest uzupełnić funkcję solve(). Nie zmieniaj jej nazwy. Testy uruchomią tę funkcję automatycznie i przekażą jej dane wejściowe."}
         </p>
+        {briefing?.hint && <p className="mt-3 rounded-md border border-amber-500/20 bg-amber-500/5 p-3 leading-6 text-amber-200"><strong>Wskazówka:</strong> {briefing.hint}</p>}
       </div>
       <div className="grid gap-3 md:grid-cols-2">
         <div className="rounded-lg border border-zinc-800 p-4">
@@ -690,10 +703,7 @@ function ChallengeBrief({ challenge }: { challenge: Challenge }) {
             Krok po kroku
           </p>
           <ol className="space-y-2 text-xs leading-5 text-zinc-400">
-            <li><strong className="text-zinc-200">1.</strong> Sprawdź, jakie argumenty otrzymuje funkcja w przykładach.</li>
-            <li><strong className="text-zinc-200">2.</strong> Napisz logikę wewnątrz <code className="text-cyan-300">solve()</code>.</li>
-            <li><strong className="text-zinc-200">3.</strong> Zwróć odpowiedź słowem <code className="text-amber-300">return</code>. Sam <code className="text-zinc-300">console.log()</code> nie zalicza zadania.</li>
-            <li><strong className="text-zinc-200">4.</strong> Kliknij <strong className="text-zinc-200">Run tests</strong> i porównaj wynik w konsoli.</li>
+            {steps.map((step, index) => <li key={`${step}-${index}`}><strong className="text-zinc-200">{index + 1}.</strong> {step}</li>)}
           </ol>
         </div>
         <div className="rounded-lg border border-zinc-800 p-4">
@@ -701,10 +711,7 @@ function ChallengeBrief({ challenge }: { challenge: Challenge }) {
             Definition of Done
           </p>
           <ul className="space-y-2 text-xs leading-5 text-zinc-400">
-            <li>✓ Funkcja nazywa się dokładnie <code className="text-cyan-300">solve</code>.</li>
-            <li>✓ Funkcja zwraca wynik w wymaganym typie.</li>
-            <li>✓ Kod nie zgłasza błędu podczas uruchomienia.</li>
-            <li>✓ Wszystkie pokazane testy mają status <span className="text-emerald-400">PASS</span>.</li>
+            {definitionOfDone.map((rule, index) => <li key={`${rule}-${index}`}><span className="text-emerald-400">✓</span> {rule}</li>)}
           </ul>
         </div>
       </div>
