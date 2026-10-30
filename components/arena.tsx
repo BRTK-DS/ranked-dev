@@ -30,6 +30,7 @@ import { Progress } from "./ui/progress";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { demoChallenges } from "@/lib/demo";
 import type { Challenge, Submission } from "@/lib/types";
+import { getChallengeLanguage } from "@/lib/challenge-language";
 import { CodeEditor } from "./code-editor";
 
 type TestResult = { ok: boolean; label: string; time: number };
@@ -53,6 +54,7 @@ export function Arena() {
   const [combo, setCombo] = useState(0);
   const [submitting, setSubmitting] = useState(false);
   const [playMode, setPlayMode] = useState<"random" | "ranked" | "training" | "arena">("arena");
+  const [languageFilter, setLanguageFilter] = useState("all");
   useEffect(() => {
     const db = getSupabaseBrowserClient();
     const requestedMode = new URLSearchParams(window.location.search).get("mode");
@@ -223,6 +225,9 @@ export function Arena() {
       selected.completion_config.template,
     );
   }, [selected, completionValues]);
+  const availableLanguages = useMemo(() => Array.from(new Set(challenges.map((challenge) => getChallengeLanguage(challenge).label))).sort(), [challenges]);
+  const visibleChallenges = useMemo(() => languageFilter === "all" ? challenges : challenges.filter((challenge) => getChallengeLanguage(challenge).label === languageFilter), [challenges, languageFilter]);
+  const selectedLanguage = getChallengeLanguage(selected);
   return (
     <main className="min-h-screen bg-zinc-950">
       <header className="sticky top-0 z-30 border-b border-zinc-800 bg-zinc-950/95 backdrop-blur-xl">
@@ -334,8 +339,12 @@ export function Arena() {
               <Swords className="size-3" />
               Challenge queue
             </p>
+            <select value={languageFilter} onChange={(event) => setLanguageFilter(event.target.value)} className="mb-3 h-9 w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 text-xs text-zinc-300 outline-none focus:border-emerald-500">
+              <option value="all">All languages</option>
+              {availableLanguages.map((language) => <option key={language} value={language}>{language}</option>)}
+            </select>
             <div className="space-y-2">
-              {challenges.map((item, index) => (
+              {visibleChallenges.map((item, index) => (
                 <motion.button
                   layout
                   whileHover={{ x: 4 }}
@@ -362,6 +371,7 @@ export function Arena() {
                     <Badge className={difficulty[item.difficulty]}>
                       {item.difficulty}
                     </Badge>
+                    <span className="font-mono text-[10px] text-zinc-500">{getChallengeLanguage(item).label}</span>
                     <ChevronRight className="size-4 text-zinc-600 transition-transform group-hover:translate-x-1 group-hover:text-emerald-400" />
                   </div>
                 </motion.button>
@@ -442,7 +452,7 @@ export function Arena() {
               </Card>
             </motion.div>
           </AnimatePresence>
-          <Card className="overflow-hidden border-zinc-700 shadow-2xl shadow-black/50">
+          <Card className="overflow-visible border-zinc-700 shadow-2xl shadow-black/50">
             <div className="flex items-center justify-between border-b bg-zinc-900 px-4 py-2.5">
               <div className="flex items-center gap-3">
                 <div className="flex gap-1.5">
@@ -453,7 +463,7 @@ export function Arena() {
                 <div className="h-4 w-px bg-zinc-700" />
                 <div className="flex items-center gap-2 rounded-md bg-zinc-800 px-3 py-1.5 font-mono text-[11px] text-zinc-300">
                   <TerminalSquare className="size-3 text-emerald-400" />{" "}
-                  solution.js{" "}
+                  solution.{selectedLanguage.extension}{" "}
                   <motion.span
                     animate={{ opacity: [0.25, 1, 0.25] }}
                     transition={{ repeat: Infinity, duration: 1.8 }}
@@ -479,7 +489,7 @@ export function Arena() {
                 <pre className="min-h-64 overflow-auto rounded-lg border bg-[#09090b] p-4 font-mono text-sm leading-6 text-zinc-300">{completionCode}</pre>
               </div>
             ) : (
-              <CodeEditor value={code} onChange={setCode} onRun={runTests} />
+              <CodeEditor value={code} onChange={setCode} onRun={runTests} language={selectedLanguage.monaco} languageLabel={selectedLanguage.label} />
             )}
             <div className="border-t border-zinc-800 bg-zinc-950">
               <div className="flex items-center justify-between border-b border-zinc-800 px-4 py-2">

@@ -3,6 +3,7 @@
   "challenges": [
     {
       "type": "code",
+      "language": "JavaScript",
       "title": "Suma dodatnich liczb",
       "description": "Dostajesz tablicę liczb. Zwróć sumę wyłącznie liczb większych od zera. Puste dane mają zwrócić 0.",
       "difficulty": "Easy",
@@ -37,6 +38,7 @@
     },
     {
       "type": "completion",
+      "language": "JavaScript",
       "title": "Uzupełnij filtrowanie użytkowników",
       "description": "Uzupełnij trzy luki tak, aby kod wybrał wyłącznie aktywnych użytkowników i zwrócił ich nazwy.",
       "difficulty": "Easy",

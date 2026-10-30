@@ -3,7 +3,7 @@
 import Editor, { type BeforeMount, type OnMount } from "@monaco-editor/react";
 import { Braces, Check, GitBranch, Keyboard } from "lucide-react";
 
-export function CodeEditor({ value, onChange, onRun }: { value: string; onChange: (value: string) => void; onRun: () => void }) {
+export function CodeEditor({ value, onChange, onRun, language = "javascript", languageLabel = "JavaScript" }: { value: string; onChange: (value: string) => void; onRun: () => void; language?: string; languageLabel?: string }) {
   const beforeMount: BeforeMount = (monaco) => {
     monaco.editor.defineTheme("ranked-dev", {
       base: "vs-dark",
@@ -51,10 +51,10 @@ export function CodeEditor({ value, onChange, onRun }: { value: string; onChange
   };
 
   return (
-    <div className="overflow-hidden bg-[#09090b]">
+    <div className="relative overflow-visible bg-[#09090b]">
       <Editor
         height="430px"
-        language="javascript"
+        language={language}
         theme="ranked-dev"
         beforeMount={beforeMount}
         onMount={onMount}
@@ -63,6 +63,7 @@ export function CodeEditor({ value, onChange, onRun }: { value: string; onChange
         loading={<div className="grid h-[430px] place-items-center font-mono text-xs text-emerald-400">BOOTING EDITOR...</div>}
         options={{
           automaticLayout: true,
+          fixedOverflowWidgets: true,
           minimap: { enabled: true, renderCharacters: false, scale: 0.8 },
           fontFamily: "JetBrains Mono, Cascadia Code, Consolas, monospace",
           fontSize: 14,
@@ -88,7 +89,7 @@ export function CodeEditor({ value, onChange, onRun }: { value: string; onChange
         <div className="flex items-center gap-4">
           <span className="flex items-center gap-1.5 text-emerald-400"><Check className="size-3" /> READY</span>
           <span className="flex items-center gap-1.5"><GitBranch className="size-3" /> main</span>
-          <span className="flex items-center gap-1.5"><Braces className="size-3" /> JavaScript</span>
+          <span className="flex items-center gap-1.5"><Braces className="size-3" /> {languageLabel}</span>
         </div>
         <span className="flex items-center gap-1.5"><Keyboard className="size-3" /> Ctrl+Enter to run</span>
       </div>

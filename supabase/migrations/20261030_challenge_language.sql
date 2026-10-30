@@ -1,0 +1,11 @@
+alter table public.challenges
+  add column if not exists language text not null default 'JavaScript';
+
+update public.challenges set language = 'PHP' where title ilike '[PHP%' or initial_code ilike '%<?php%';
+update public.challenges set language = 'C#' where title ilike '[C#%' or initial_code ilike '%using System%';
+update public.challenges set language = 'HTML' where title ilike '[HTML%';
+update public.challenges set language = 'XML' where title ilike '[XML%' or initial_code ilike '<?xml%';
+update public.challenges set language = 'GraphQL' where title ilike '[GraphQL%';
+update public.challenges set language = 'SQL' where title ilike '[SQL%';
+
+notify pgrst, 'reload schema';

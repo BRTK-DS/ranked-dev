@@ -3,6 +3,7 @@
   "challenges": [
     {
       "type": "completion",
+      "language": "JavaScript",
       "title": "Filtrowanie aktywnych użytkowników",
       "description": "Uzupełnij trzy luki w kodzie tak, aby funkcja wybrała wyłącznie aktywnych użytkowników, a następnie zwróciła tablicę zawierającą ich nazwy.",
       "difficulty": "Easy",

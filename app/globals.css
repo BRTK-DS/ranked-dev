@@ -2,3 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 @layer base { * { @apply border-border; } body { @apply bg-background text-foreground antialiased; } }
+.monaco-editor .suggest-widget,
+.monaco-editor .monaco-hover,
+.monaco-editor .parameter-hints-widget { z-index: 1000 !important; }

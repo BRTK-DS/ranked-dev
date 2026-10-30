@@ -11,6 +11,7 @@ import { Button } from "./ui/button";
 import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import { demoChallenges } from "@/lib/demo";
 import type { Challenge } from "@/lib/types";
+import { getChallengeLanguage } from "@/lib/challenge-language";
 
 type Language = "pl" | "en";
 type Filter = "all" | "code" | "completion";
@@ -55,11 +56,13 @@ export function LandingPage() {
   const [challenges, setChallenges] = useState<Challenge[]>(demoChallenges);
   const [format, setFormat] = useState<Filter>("all");
   const [level, setLevel] = useState<"all" | Challenge["difficulty"]>("all");
+  const [codeLanguage, setCodeLanguage] = useState("all");
   const t = copy[language];
 
   useEffect(() => { const saved = window.localStorage.getItem("ranked-language"); if (saved === "pl" || saved === "en") setLanguage(saved); }, []);
   useEffect(() => { void getSupabaseBrowserClient().from("challenges").select("*").order("created_at").then(({ data }) => { if (data?.length) setChallenges(data as Challenge[]); }); }, []);
-  const filtered = useMemo(() => challenges.filter((challenge) => (format === "all" || (challenge.challenge_type ?? "code") === format) && (level === "all" || challenge.difficulty === level)), [challenges, format, level]);
+  const availableLanguages = useMemo(() => Array.from(new Set(challenges.map((challenge) => getChallengeLanguage(challenge).label))).sort(), [challenges]);
+  const filtered = useMemo(() => challenges.filter((challenge) => (format === "all" || (challenge.challenge_type ?? "code") === format) && (level === "all" || challenge.difficulty === level) && (codeLanguage === "all" || getChallengeLanguage(challenge).label === codeLanguage)), [challenges, format, level, codeLanguage]);
   function switchLanguage() { const next = language === "pl" ? "en" : "pl"; setLanguage(next); window.localStorage.setItem("ranked-language", next); }
   function openRandom(mode: "random" | "ranked" | "training") {
     const pool = mode === "training" ? challenges.filter((item) => item.difficulty === "Easy") : mode === "ranked" ? challenges.filter((item) => item.difficulty !== "Easy") : challenges;
@@ -96,11 +99,11 @@ export function LandingPage() {
 
     <section id="challenges" className="relative border-y border-white/5 bg-white/[.015] py-24"><div className="mx-auto max-w-7xl px-5 lg:px-8">
       <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end"><div><p className="text-xs font-bold uppercase tracking-[.2em] text-emerald-400">{t.explore}</p><h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">{t.available}</h2><p className="mt-3 max-w-xl text-zinc-400">{t.choose}</p></div><div className="flex flex-wrap gap-2">{(["all", "code", "completion"] as Filter[]).map(value => <Button key={value} variant={format === value ? "default" : "outline"} size="sm" onClick={() => setFormat(value)}>{value === "all" ? t.all : value === "code" ? t.code : t.completion}</Button>)}</div></div>
-      <div className="mt-6 flex flex-wrap gap-2">{(["all", "Easy", "Medium", "Hard"] as const).map(value => <button key={value} onClick={() => setLevel(value)} className={`rounded-full border px-3 py-1.5 text-xs transition ${level === value ? "border-zinc-500 bg-zinc-800 text-white" : "border-zinc-800 text-zinc-500 hover:text-zinc-200"}`}>{value === "all" ? t.all : value === "Easy" ? t.easy : value === "Medium" ? t.medium : t.hard}</button>)}</div>
+      <div className="mt-6 flex flex-wrap items-center gap-2">{(["all", "Easy", "Medium", "Hard"] as const).map(value => <button key={value} onClick={() => setLevel(value)} className={`rounded-full border px-3 py-1.5 text-xs transition ${level === value ? "border-zinc-500 bg-zinc-800 text-white" : "border-zinc-800 text-zinc-500 hover:text-zinc-200"}`}>{value === "all" ? t.all : value === "Easy" ? t.easy : value === "Medium" ? t.medium : t.hard}</button>)}<span className="mx-1 hidden h-5 w-px bg-zinc-800 sm:block"/><select value={codeLanguage} onChange={(event) => setCodeLanguage(event.target.value)} className="h-8 rounded-full border border-zinc-800 bg-[#0d1014] px-3 text-xs text-zinc-300 outline-none focus:border-emerald-500"><option value="all">{language === "pl" ? "Wszystkie języki" : "All languages"}</option>{availableLanguages.map((item) => <option key={item} value={item}>{item}</option>)}</select></div>
       <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">{filtered.map((challenge, index) => <motion.article layout initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(index * .04, .2) }} key={challenge.id} className="group flex min-h-64 flex-col rounded-xl border border-white/8 bg-[#0d1014] p-5 transition hover:-translate-y-1 hover:border-emerald-500/30">
         <div className="flex items-center justify-between"><span className="grid size-9 place-items-center rounded-lg border border-white/5 bg-black/30 text-emerald-300">{challenge.challenge_type === "completion" ? <Braces className="size-4"/> : <TerminalSquare className="size-4"/>}</span><Badge className={difficultyStyle[challenge.difficulty]}>{challenge.difficulty}</Badge></div>
         <h3 className="mt-5 text-lg font-bold leading-6 group-hover:text-emerald-300">{challenge.title}</h3><p className="mt-3 line-clamp-3 text-sm leading-6 text-zinc-500">{challenge.description}</p>
-        <div className="mt-auto flex items-center justify-between pt-6"><span className="text-[10px] font-bold uppercase tracking-wider text-zinc-600">{challenge.challenge_type === "completion" ? t.completion : t.code}</span><Link href={`/arena?challenge=${encodeURIComponent(challenge.id)}`} className="flex items-center gap-1 text-sm font-semibold text-emerald-300">{t.open}<ArrowRight className="size-4 transition group-hover:translate-x-1"/></Link></div>
+        <div className="mt-auto flex items-center justify-between pt-6"><span className="text-[10px] font-bold uppercase tracking-wider text-zinc-600">{getChallengeLanguage(challenge).label} · {challenge.challenge_type === "completion" ? t.completion : t.code}</span><Link href={`/arena?challenge=${encodeURIComponent(challenge.id)}`} className="flex items-center gap-1 text-sm font-semibold text-emerald-300">{t.open}<ArrowRight className="size-4 transition group-hover:translate-x-1"/></Link></div>
       </motion.article>)}</div>{!filtered.length && <div className="mt-8 rounded-xl border border-dashed border-zinc-800 p-12 text-center text-zinc-500">{t.empty}</div>}
     </div></section>
 

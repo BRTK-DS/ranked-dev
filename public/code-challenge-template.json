@@ -3,6 +3,7 @@
   "challenges": [
     {
       "type": "code",
+      "language": "JavaScript",
       "title": "Suma dodatnich liczb",
       "description": "Dostajesz tablicę liczb. Zwróć sumę wyłącznie elementów większych od zera. Liczby ujemne i zero należy pominąć. Dla pustej tablicy zwróć 0.",
       "difficulty": "Easy",
