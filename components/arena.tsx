@@ -38,7 +38,9 @@ const difficulty = {
   Easy: "text-emerald-400 border-emerald-500/30 bg-emerald-500/10",
   Medium: "text-amber-300 border-amber-500/30 bg-amber-500/10",
   Hard: "text-rose-400 border-rose-500/30 bg-rose-500/10",
+  Insane: "text-fuchsia-300 border-fuchsia-500/40 bg-fuchsia-500/10",
 };
+const xpReward = { Easy: 50, Medium: 100, Hard: 180, Insane: 300 };
 
 export function Arena() {
   const { session, profile, loading, signOut, refreshProfile } = useAuth();
@@ -445,7 +447,7 @@ export function Arena() {
                       2 PUBLIC TESTS
                     </span>
                     <span className="rounded-md border bg-zinc-950 px-2 py-1 text-[10px] text-zinc-500">
-                      +50 XP
+                      +{xpReward[selected.difficulty]} XP
                     </span>
                   </div>
                 </CardHeader>

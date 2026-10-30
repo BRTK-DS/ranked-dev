@@ -22,7 +22,7 @@ const copy = {
     titleA: "Koduj. Testuj.", titleB: "Wchodź wyżej.",
     intro: "RANKED.DEV to interaktywna arena programistyczna. Wybierasz zadanie, piszesz lub uzupełniasz kod i od razu sprawdzasz wynik na testach.",
     start: "Wybierz pierwsze zadanie", explore: "Zobacz zadania", available: "Dostępne zadania", choose: "Wybierz format i poziom, a potem rozpocznij zadanie bez zbędnej konfiguracji.",
-    all: "Wszystkie", code: "Pisanie kodu", completion: "Uzupełnianie luk", easy: "Łatwe", medium: "Średnie", hard: "Trudne",
+    all: "Wszystkie", code: "Pisanie kodu", completion: "Uzupełnianie luk", easy: "Łatwe", medium: "Średnie", hard: "Trudne", insane: "Ekstremalne",
     open: "Rozpocznij", empty: "Brak zadań dla wybranych filtrów.", howTitle: "Od zadania do rozwiązania", howIntro: "Krótka pętla informacji zwrotnej pomaga skupić się na praktyce.",
     steps: [["01", "Wybierz wyzwanie", "Filtruj zadania według formatu i poziomu trudności."], ["02", "Napisz rozwiązanie", "Pracuj w edytorze albo uzupełnij wskazane luki."], ["03", "Uruchom testy", "Zobacz wynik, popraw kod i buduj serię zaliczonych zadań."]],
     footer: "Gotowy na następne zadanie?", footerText: "Wejdź do areny i sprawdź się na działającym kodzie.", signIn: "Zaloguj się", admin: "Panel admina", tasks: "zadań",
@@ -36,7 +36,7 @@ const copy = {
     titleA: "Code. Test.", titleB: "Climb higher.",
     intro: "RANKED.DEV is an interactive coding arena. Pick a challenge, write or complete the code, and get immediate feedback from tests.",
     start: "Pick your first challenge", explore: "Explore challenges", available: "Available challenges", choose: "Choose a format and difficulty, then start without unnecessary setup.",
-    all: "All", code: "Write code", completion: "Fill the gaps", easy: "Easy", medium: "Medium", hard: "Hard",
+    all: "All", code: "Write code", completion: "Fill the gaps", easy: "Easy", medium: "Medium", hard: "Hard", insane: "Insane",
     open: "Start", empty: "No challenges match these filters.", howTitle: "From prompt to solution", howIntro: "A short feedback loop keeps the focus on hands-on practice.",
     steps: [["01", "Choose a challenge", "Filter tasks by format and difficulty."], ["02", "Build a solution", "Work in the editor or complete the highlighted gaps."], ["03", "Run the tests", "Review feedback, improve your code, and build a streak."]],
     footer: "Ready for the next challenge?", footerText: "Enter the arena and put your code to the test.", signIn: "Sign in", admin: "Admin panel", tasks: "challenges",
@@ -47,7 +47,7 @@ const copy = {
   },
 } as const;
 
-const difficultyStyle = { Easy: "border-emerald-500/30 text-emerald-300", Medium: "border-amber-500/30 text-amber-300", Hard: "border-rose-500/30 text-rose-300" };
+const difficultyStyle = { Easy: "border-emerald-500/30 text-emerald-300", Medium: "border-amber-500/30 text-amber-300", Hard: "border-rose-500/30 text-rose-300", Insane: "border-fuchsia-500/40 text-fuchsia-300" };
 
 export function LandingPage() {
   const router = useRouter();
@@ -86,7 +86,7 @@ export function LandingPage() {
         <p className="mx-auto mt-7 max-w-2xl text-base leading-7 text-zinc-400 sm:text-lg">{t.intro}</p>
         <div className="mt-9 flex flex-wrap justify-center gap-3"><Button className="h-12 px-6" onClick={() => openRandom("random")}><Dices className="size-4" />{t.randomCta}</Button><Button asChild className="h-12 px-6" variant="outline"><a href="#modes">{t.modeEyebrow}<ArrowRight className="size-4" /></a></Button></div>
       </motion.div>
-      <div className="mx-auto mt-16 grid max-w-3xl grid-cols-3 divide-x divide-white/10 rounded-2xl border border-white/8 bg-white/[.025] py-5 text-sm text-zinc-500 backdrop-blur"><span><strong className="block text-2xl text-zinc-100">{challenges.length}</strong>{t.tasks}</span><span><strong className="block text-2xl text-zinc-100">2</strong>{language === "pl" ? "formaty" : "formats"}</span><span><strong className="block text-2xl text-zinc-100">3</strong>{language === "pl" ? "poziomy" : "levels"}</span></div>
+      <div className="mx-auto mt-16 grid max-w-3xl grid-cols-3 divide-x divide-white/10 rounded-2xl border border-white/8 bg-white/[.025] py-5 text-sm text-zinc-500 backdrop-blur"><span><strong className="block text-2xl text-zinc-100">{challenges.length}</strong>{t.tasks}</span><span><strong className="block text-2xl text-zinc-100">2</strong>{language === "pl" ? "formaty" : "formats"}</span><span><strong className="block text-2xl text-zinc-100">4</strong>{language === "pl" ? "poziomy" : "levels"}</span></div>
     </section>
 
     <section id="modes" className="relative mx-auto max-w-7xl px-5 pb-24 lg:px-8"><div className="mb-9 text-center"><p className="text-xs font-bold uppercase tracking-[.2em] text-emerald-400">{t.modeEyebrow}</p><h2 className="mt-3 text-3xl font-black sm:text-4xl">{t.modeTitle}</h2><p className="mx-auto mt-3 max-w-2xl text-zinc-400">{t.modeIntro}</p></div>
@@ -99,7 +99,7 @@ export function LandingPage() {
 
     <section id="challenges" className="relative border-y border-white/5 bg-white/[.015] py-24"><div className="mx-auto max-w-7xl px-5 lg:px-8">
       <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end"><div><p className="text-xs font-bold uppercase tracking-[.2em] text-emerald-400">{t.explore}</p><h2 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">{t.available}</h2><p className="mt-3 max-w-xl text-zinc-400">{t.choose}</p></div><div className="flex flex-wrap gap-2">{(["all", "code", "completion"] as Filter[]).map(value => <Button key={value} variant={format === value ? "default" : "outline"} size="sm" onClick={() => setFormat(value)}>{value === "all" ? t.all : value === "code" ? t.code : t.completion}</Button>)}</div></div>
-      <div className="mt-6 flex flex-wrap items-center gap-2">{(["all", "Easy", "Medium", "Hard"] as const).map(value => <button key={value} onClick={() => setLevel(value)} className={`rounded-full border px-3 py-1.5 text-xs transition ${level === value ? "border-zinc-500 bg-zinc-800 text-white" : "border-zinc-800 text-zinc-500 hover:text-zinc-200"}`}>{value === "all" ? t.all : value === "Easy" ? t.easy : value === "Medium" ? t.medium : t.hard}</button>)}<span className="mx-1 hidden h-5 w-px bg-zinc-800 sm:block"/><select value={codeLanguage} onChange={(event) => setCodeLanguage(event.target.value)} className="h-8 rounded-full border border-zinc-800 bg-[#0d1014] px-3 text-xs text-zinc-300 outline-none focus:border-emerald-500"><option value="all">{language === "pl" ? "Wszystkie języki" : "All languages"}</option>{availableLanguages.map((item) => <option key={item} value={item}>{item}</option>)}</select></div>
+      <div className="mt-6 flex flex-wrap items-center gap-2">{(["all", "Easy", "Medium", "Hard", "Insane"] as const).map(value => <button key={value} onClick={() => setLevel(value)} className={`rounded-full border px-3 py-1.5 text-xs transition ${level === value ? "border-zinc-500 bg-zinc-800 text-white" : "border-zinc-800 text-zinc-500 hover:text-zinc-200"}`}>{value === "all" ? t.all : value === "Easy" ? t.easy : value === "Medium" ? t.medium : value === "Hard" ? t.hard : t.insane}</button>)}<span className="mx-1 hidden h-5 w-px bg-zinc-800 sm:block"/><select value={codeLanguage} onChange={(event) => setCodeLanguage(event.target.value)} className="h-8 rounded-full border border-zinc-800 bg-[#0d1014] px-3 text-xs text-zinc-300 outline-none focus:border-emerald-500"><option value="all">{language === "pl" ? "Wszystkie języki" : "All languages"}</option>{availableLanguages.map((item) => <option key={item} value={item}>{item}</option>)}</select></div>
       <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">{filtered.map((challenge, index) => <motion.article layout initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: Math.min(index * .04, .2) }} key={challenge.id} className="group flex min-h-64 flex-col rounded-xl border border-white/8 bg-[#0d1014] p-5 transition hover:-translate-y-1 hover:border-emerald-500/30">
         <div className="flex items-center justify-between"><span className="grid size-9 place-items-center rounded-lg border border-white/5 bg-black/30 text-emerald-300">{challenge.challenge_type === "completion" ? <Braces className="size-4"/> : <TerminalSquare className="size-4"/>}</span><Badge className={difficultyStyle[challenge.difficulty]}>{challenge.difficulty}</Badge></div>
         <h3 className="mt-5 text-lg font-bold leading-6 group-hover:text-emerald-300">{challenge.title}</h3><p className="mt-3 line-clamp-3 text-sm leading-6 text-zinc-500">{challenge.description}</p>

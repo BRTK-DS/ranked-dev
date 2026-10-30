@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "challenges": [
+    {
+      "type": "code",
+      "language": "JavaScript",
+      "title": "Harmonogram zadań z zależnościami i priorytetami",
+      "description": "Zaimplementuj deterministyczny harmonogram wykonywania zadań. Każde zadanie posiada unikalny identyfikator id, liczbowy priorytet priority oraz tablicę dependencies zawierającą identyfikatory zadań, które muszą zostać wykonane wcześniej.\n\nW każdej iteracji wybierz spośród dostępnych zadań to z najwyższym priorytetem. Jeżeli kilka zadań ma ten sam priorytet, wybierz identyfikator wcześniejszy alfabetycznie. Zależności mogą występować w dowolnej kolejności wejściowej.\n\nJeżeli graf zawiera cykl, zależność od nieistniejącego zadania, zduplikowany identyfikator albo zadanie zależy samo od siebie, zwróć pustą tablicę. Nie modyfikuj danych wejściowych.",
+      "difficulty": "Insane",
+      "briefing": {
+        "instructions": "Uzupełnij funkcję solve(tasks). Zwróć tablicę identyfikatorów w kolejności wykonania. Rozwiązanie powinno przeprowadzić walidację danych, zbudować graf zależności i wykonać deterministyczne sortowanie topologiczne.",
+        "steps": [
+          "Sprawdź unikalność identyfikatorów oraz poprawność struktury każdego zadania.",
+          "Zweryfikuj, czy wszystkie zależności istnieją i czy żadne zadanie nie zależy samo od siebie.",
+          "Zbuduj mapę stopni wejściowych oraz listę zadań zależnych od każdego węzła.",
+          "Utwórz zbiór zadań, których wszystkie zależności zostały już spełnione.",
+          "Wybieraj dostępne zadanie o najwyższym priorytecie, a przy remisie sortuj po id.",
+          "Po wykonaniu zadania zmniejsz stopień wejściowy jego następców i dodaj nowo dostępne zadania.",
+          "Jeśli liczba wykonanych zadań jest mniejsza od liczby wejściowej, wykryto cykl — zwróć pustą tablicę."
+        ],
+        "definition_of_done": [
+          "Każde zadanie znajduje się w wyniku dokładnie raz.",
+          "Zadanie nigdy nie występuje przed którąkolwiek ze swoich zależności.",
+          "Spośród dostępnych zadań zawsze wybierany jest najwyższy priorytet.",
+          "Remisy priorytetów rozstrzygane są alfabetycznie po id.",
+          "Niepoprawne zależności, duplikaty i cykle zwracają pustą tablicę.",
+          "Funkcja nie modyfikuje tablicy tasks ani obiektów znajdujących się wewnątrz.",
+          "Wszystkie testy publiczne i losowe kończą się statusem PASS."
+        ],
+        "hint": "Użyj algorytmu Kahna. Zamiast zwykłej kolejki utrzymuj listę dostępnych węzłów sortowaną malejąco po priority i rosnąco po id."
+      },
+      "initial_code": "function solve(tasks) {\n  // 1. Zwaliduj dane i zbuduj mapę zadań.\n  // 2. Oblicz stopnie wejściowe i listy następców.\n  // 3. Wykonaj sortowanie topologiczne z priorytetami.\n  // 4. Wykryj cykl i zwróć wynik.\n  \n}",
+      "tests_per_run": 5,
+      "test_cases": [
+        {
+          "input": "[[{\"id\":\"build\",\"priority\":2,\"dependencies\":[\"lint\"]},{\"id\":\"lint\",\"priority\":1,\"dependencies\":[]},{\"id\":\"deploy\",\"priority\":5,\"dependencies\":[\"build\"]}]]",
+          "expected": "[\"lint\",\"build\",\"deploy\"]"
+        },
+        {
+          "input": "[[{\"id\":\"alpha\",\"priority\":3,\"dependencies\":[]},{\"id\":\"beta\",\"priority\":5,\"dependencies\":[]},{\"id\":\"gamma\",\"priority\":5,\"dependencies\":[]}]]",
+          "expected": "[\"beta\",\"gamma\",\"alpha\"]"
+        },
+        {
+          "input": "[[{\"id\":\"api\",\"priority\":10,\"dependencies\":[\"db\"]},{\"id\":\"ui\",\"priority\":8,\"dependencies\":[\"api\"]},{\"id\":\"db\",\"priority\":1,\"dependencies\":[]},{\"id\":\"docs\",\"priority\":4,\"dependencies\":[]}]]",
+          "expected": "[\"docs\",\"db\",\"api\",\"ui\"]"
+        },
+        {
+          "input": "[[{\"id\":\"a\",\"priority\":1,\"dependencies\":[\"b\"]},{\"id\":\"b\",\"priority\":1,\"dependencies\":[\"a\"]}]]",
+          "expected": "[]"
+        },
+        {
+          "input": "[[{\"id\":\"orphan\",\"priority\":1,\"dependencies\":[\"missing\"]}]]",
+          "expected": "[]"
+        }
+      ],
+      "random_tests": {
+        "cases_per_run": 8,
+        "generator": "const count = 6 + Math.floor(Math.random() * 10);\nconst tasks = Array.from({ length: count }, (_, index) => ({\n  id: `task-${String(index).padStart(2, '0')}`,\n  priority: 1 + Math.floor(Math.random() * 10),\n  dependencies: []\n}));\nfor (let index = 1; index < count; index++) {\n  for (let previous = 0; previous < index; previous++) {\n    if (Math.random() < 0.18) tasks[index].dependencies.push(tasks[previous].id);\n  }\n}\nfor (let index = tasks.length - 1; index > 0; index--) {\n  const swap = Math.floor(Math.random() * (index + 1));\n  [tasks[index], tasks[swap]] = [tasks[swap], tasks[index]];\n}\nreturn [tasks];",
+        "oracle": "const tasks = args[0];\nconst byId = new Map(tasks.map(task => [task.id, task]));\nconst degree = new Map(tasks.map(task => [task.id, task.dependencies.length]));\nconst next = new Map(tasks.map(task => [task.id, []]));\nfor (const task of tasks) for (const dependency of task.dependencies) next.get(dependency).push(task.id);\nconst available = tasks.filter(task => degree.get(task.id) === 0);\nconst result = [];\nwhile (available.length) {\n  available.sort((a, b) => b.priority - a.priority || a.id.localeCompare(b.id));\n  const current = available.shift();\n  result.push(current.id);\n  for (const id of next.get(current.id)) {\n    degree.set(id, degree.get(id) - 1);\n    if (degree.get(id) === 0) available.push(byId.get(id));\n  }\n}\nreturn result.length === tasks.length ? result : [];"
+      }
+    }
+  ]
+}
