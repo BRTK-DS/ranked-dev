@@ -11,7 +11,7 @@ const definitions: Record<string, { label: string; monaco: string; extension: st
   html: { label: "HTML", monaco: "html", extension: "html" },
   xml: { label: "XML", monaco: "xml", extension: "xml" },
   xslt: { label: "XSLT", monaco: "xml", extension: "xsl" },
-  xpath: { label: "XPath", monaco: "xml", extension: "xpath" },
+  xpath: { label: "XPath", monaco: "xpath", extension: "xpath" },
   graphql: { label: "GraphQL", monaco: "graphql", extension: "graphql" },
   sql: { label: "SQL", monaco: "sql", extension: "sql" },
   json: { label: "JSON", monaco: "json", extension: "json" },
@@ -20,5 +20,5 @@ const definitions: Record<string, { label: string; monaco: string; extension: st
 export function getChallengeLanguage(challenge: Pick<Challenge, "language" | "title" | "initial_code">) {
   const explicit = challenge.language?.trim().toLowerCase();
   if (explicit && definitions[explicit]) return definitions[explicit];
-  return definitions.javascript;
+  return { label: challenge.language || "Unknown", monaco: "plaintext", extension: "txt" };
 }

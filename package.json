@@ -1,6 +1,44 @@
 {
-  "name": "ranked-dev", "version": "2.0.0", "private": true,
-  "scripts": { "dev": "next dev", "build": "next build", "start": "next start", "typecheck": "tsc --noEmit" },
-  "dependencies": { "@monaco-editor/react": "^4.7.0", "@radix-ui/react-slot": "^1.1.2", "@supabase/supabase-js": "^2.49.4", "class-variance-authority": "^0.7.1", "clsx": "^2.1.1", "framer-motion": "^12.6.3", "lucide-react": "^0.487.0", "monaco-editor": "^0.52.2", "next": "^16.4.3", "react": "^19.0.0", "react-dom": "^19.0.0", "tailwind-merge": "^3.0.2" },
-  "devDependencies": { "@types/node": "^22.13.14", "@types/react": "^19.0.12", "@types/react-dom": "^19.0.4", "autoprefixer": "^10.4.21", "postcss": "^8.5.3", "tailwindcss": "^3.4.17", "typescript": "^5.8.2" }
+  "name": "ranked-dev",
+  "version": "2.0.0",
+  "private": true,
+  "scripts": {
+    "predev": "node scripts/build-language-tools.mjs",
+    "prebuild": "node scripts/build-language-tools.mjs",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "test:languages": "node scripts/build-language-tools.mjs && node scripts/test-language-tools.mjs"
+  },
+  "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
+    "@radix-ui/react-slot": "^1.1.2",
+    "@supabase/supabase-js": "^2.49.4",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.6.3",
+    "graphql": "^17.0.2",
+    "html-validate": "^11.17.0",
+    "lucide-react": "^0.487.0",
+    "monaco-editor": "^0.52.2",
+    "next": "^16.4.3",
+    "node-sql-parser": "^5.4.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^3.0.2",
+    "tree-sitter-wasms": "^0.1.13",
+    "web-tree-sitter": "^0.20.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.14",
+    "@types/react": "^19.0.12",
+    "@types/react-dom": "^19.0.4",
+    "autoprefixer": "^10.4.21",
+    "esbuild": "^0.28.2",
+    "playwright-core": "^1.64.1",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.8.2"
+  }
 }

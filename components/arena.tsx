@@ -491,7 +491,7 @@ export function Arena() {
                 <pre className="min-h-64 overflow-auto rounded-lg border bg-[#09090b] p-4 font-mono text-sm leading-6 text-zinc-300">{completionCode}</pre>
               </div>
             ) : (
-              <CodeEditor value={code} onChange={setCode} onRun={runTests} language={selectedLanguage.monaco} languageLabel={selectedLanguage.label} />
+              <CodeEditor key={`${selected.id}-${selectedLanguage.monaco}`} value={code} onChange={setCode} onRun={runTests} language={selectedLanguage.monaco} languageLabel={selectedLanguage.label} modelPath={`file:///challenges/${encodeURIComponent(selected.id)}/${selectedLanguage.monaco}/solution.${selectedLanguage.extension}`} />
             )}
             <div className="border-t border-zinc-800 bg-zinc-950">
               <div className="flex items-center justify-between border-b border-zinc-800 px-4 py-2">

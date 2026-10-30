@@ -1,10 +1,20 @@
 "use client";
 
-import Editor, { type BeforeMount, type OnMount } from "@monaco-editor/react";
+import Editor, { loader, type BeforeMount, type OnMount } from "@monaco-editor/react";
 import { Braces, Check, GitBranch, Keyboard } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { attachLanguageServices, registerXPath } from "@/lib/editor-language-services";
 
-export function CodeEditor({ value, onChange, onRun, language = "javascript", languageLabel = "JavaScript" }: { value: string; onChange: (value: string) => void; onRun: () => void; language?: string; languageLabel?: string }) {
+loader.config({ paths: { vs: '/ranked-dev/language-tools/vs' } });
+
+export function CodeEditor({ value, onChange, onRun, language, languageLabel, modelPath }: { value: string; onChange: (value: string) => void; onRun: () => void; language: string; languageLabel: string; modelPath: string }) {
+  const runRef = useRef(onRun);
+  runRef.current = onRun;
+  const cleanup = useRef<(() => void) | undefined>(undefined);
+  const [diagnosticsStatus, setDiagnosticsStatus] = useState('Loading language tools…');
+  useEffect(() => () => cleanup.current?.(), []);
   const beforeMount: BeforeMount = (monaco) => {
+    registerXPath(monaco);
     monaco.editor.defineTheme("ranked-dev", {
       base: "vs-dark",
       inherit: true,
@@ -41,11 +51,15 @@ export function CodeEditor({ value, onChange, onRun, language = "javascript", la
   };
 
   const onMount: OnMount = (editor, monaco) => {
+    const model = editor.getModel();
+    if (model && model.getLanguageId() !== language) monaco.editor.setModelLanguage(model, language);
+    cleanup.current?.();
+    cleanup.current = attachLanguageServices(monaco, editor, languageLabel, setDiagnosticsStatus);
     editor.addAction({
       id: "ranked-dev.run",
       label: "Run public tests",
       keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter],
-      run: onRun
+      run: () => runRef.current()
     });
     editor.focus();
   };
@@ -53,6 +67,10 @@ export function CodeEditor({ value, onChange, onRun, language = "javascript", la
   return (
     <div className="relative overflow-visible bg-[#09090b]">
       <Editor
+        key={modelPath}
+        path={modelPath}
+        keepCurrentModel={false}
+        saveViewState={false}
         height="430px"
         language={language}
         theme="ranked-dev"
@@ -90,6 +108,7 @@ export function CodeEditor({ value, onChange, onRun, language = "javascript", la
           <span className="flex items-center gap-1.5 text-emerald-400"><Check className="size-3" /> READY</span>
           <span className="flex items-center gap-1.5"><GitBranch className="size-3" /> main</span>
           <span className="flex items-center gap-1.5"><Braces className="size-3" /> {languageLabel}</span>
+          <span role="status">{diagnosticsStatus}</span>
         </div>
         <span className="flex items-center gap-1.5"><Keyboard className="size-3" /> Ctrl+Enter to run</span>
       </div>
