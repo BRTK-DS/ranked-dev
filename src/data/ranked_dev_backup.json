@@ -1,0 +1,756 @@
+{
+  "exportedAt": "2026-10-30T16:11:35.790Z",
+  "profile": {
+    "nickname": "TacticalCoder#PL",
+    "rr": 650,
+    "peakRR": 650,
+    "exp": 420,
+    "streak": 2,
+    "bestStreak": 2,
+    "wins": 4,
+    "losses": 1,
+    "solvedTaskIds": [],
+    "matchHistory": [
+      {
+        "id": "init-1",
+        "taskTitle": "Rozstawienie Sezonowe (Placement Match)",
+        "language": "JS",
+        "mode": "ranked",
+        "result": "VICTORY",
+        "rrDelta": 25,
+        "expGained": 120,
+        "timestamp": "18:30"
+      }
+    ]
+  },
+  "challenges": [
+    {
+      "id": "cal-js-1",
+      "title": "[JS] Kalkulator MMR po meczu (Code IDE)",
+      "language": "JS",
+      "type": "code",
+      "difficulty": "Easy",
+      "rrReward": 28,
+      "rrPenalty": 8,
+      "expReward": 100,
+      "category": "Algorytmy / Logika ELO",
+      "description": "Napisz funkcję `calculateMMR(baseRR, streak, isMVP)`, która oblicza końcowy przyrost punktów RR po wygranym meczu rankingowym.\n\nZasady:\n1. Jeśli `streak >= 3`, gracz otrzymuje bonus `+5` RR za każdy mecz w serii powyżej 2 (czyli `(streak - 2) * 5`).\n2. Jeśli `isMVP === true`, dodaj dodatkowe `+10` RR.\n3. Zwróć zsumowaną liczbę punktów RR.",
+      "examples": [
+        {
+          "input": "calculateMMR(20, 1, false)",
+          "output": "20"
+        },
+        {
+          "input": "calculateMMR(20, 4, true)",
+          "output": "40 // 20 + (2 * 5) + 10"
+        }
+      ],
+      "hint": "Sprawdź warunek streak >= 3 i dodaj (streak - 2) * 5, a następnie jeśli isMVP jest prawdziwe, dodaj 10.",
+      "starterCode": "function calculateMMR(baseRR, streak, isMVP) {\n    let total = baseRR;\n    // Użyj klawisza Tab do wcięć w kodzie!\n    if (streak >= 3) {\n        total += (streak - 2) * 5;\n    }\n    if (isMVP) {\n        total += 10;\n    }\n    return total;\n}",
+      "solutionPreview": "function calculateMMR(baseRR, streak, isMVP) {\n    let total = baseRR;\n    if (streak >= 3) {\n        total += (streak - 2) * 5;\n    }\n    if (isMVP) {\n        total += 10;\n    }\n    return total;\n}",
+      "jsTests": [
+        {
+          "name": "Brak serii i brak MVP",
+          "call": "calculateMMR(20, 1, false)",
+          "expected": 20
+        },
+        {
+          "name": "Seria 3 zwycięstw bez MVP (+5 RR)",
+          "call": "calculateMMR(22, 3, false)",
+          "expected": 27
+        },
+        {
+          "name": "Seria 5 zwycięstw + MVP (+15 + 10 RR)",
+          "call": "calculateMMR(20, 5, true)",
+          "expected": 45
+        }
+      ],
+      "codeTemplate": "",
+      "slots": [],
+      "tokenBank": [],
+      "requiredTokens": []
+    },
+    {
+      "id": "cal-js-2",
+      "title": "[JS] Filtrowanie i sortowanie lobby (Luki)",
+      "language": "JS",
+      "type": "completion",
+      "difficulty": "Medium",
+      "rrReward": 30,
+      "rrPenalty": 10,
+      "expReward": 125,
+      "category": "Array Methods / ES6",
+      "description": "Uzupełnij brakujące metody tablicowe, aby przefiltrować graczy posiadających `mmr >= 1500`, posortować ich malejąco po `mmr` oraz zwrócić tablicę samych pseudonimów (`nickname`).",
+      "examples": [
+        {
+          "input": "getTopNicknames([{ nickname: \"Ace\", mmr: 1800 }, { nickname: \"Bot\", mmr: 900 }])",
+          "output": "[\"Ace\"]"
+        }
+      ],
+      "hint": "Najpierw filter(), potem sort((a, b) => b.mmr - a.mmr), a na końcu map().",
+      "codeTemplate": "function getTopNicknames(players) {\n    return players\n        .{{0}}(p => p.mmr >= 1500)\n        .{{1}}((a, b) => b.mmr - a.mmr)\n        .{{2}}(p => p.nickname);\n}",
+      "slots": [
+        {
+          "id": 0,
+          "label": "Metoda filtrująca tablicę",
+          "placeholder": "metoda...",
+          "options": [
+            "filter",
+            "map",
+            "find",
+            "reduce"
+          ],
+          "answer": [
+            "filter"
+          ]
+        },
+        {
+          "id": 1,
+          "label": "Metoda sortująca tablicę",
+          "placeholder": "metoda...",
+          "options": [
+            "sort",
+            "orderBy",
+            "reverse",
+            "slice"
+          ],
+          "answer": [
+            "sort"
+          ]
+        },
+        {
+          "id": 2,
+          "label": "Transformacja do tablicy nicków",
+          "placeholder": "metoda...",
+          "options": [
+            "map",
+            "forEach",
+            "flatMap",
+            "pluck"
+          ],
+          "answer": [
+            "map"
+          ]
+        }
+      ],
+      "tokenBank": [],
+      "starterCode": "",
+      "requiredTokens": []
+    },
+    {
+      "id": "cal-php-1",
+      "title": "[PHP 8] Walidacja tokenu lobby (Luki)",
+      "language": "PHP",
+      "type": "completion",
+      "difficulty": "Easy",
+      "rrReward": 25,
+      "rrPenalty": 7,
+      "expReward": 100,
+      "category": "Backend / Bezpieczeństwo",
+      "description": "Uzupełnij luki w metodzie klasy `LobbyGuard`, tak aby funkcja przyjmowała typowany argument `string $token`, sprawdzała czy jego długość wynosi co najmniej 16 znaków za pomocą `strlen()` oraz bezpiecznie porównywała hashe przez `hash_equals`.",
+      "examples": [
+        {
+          "input": "$guard->verify(\"secret_token_12345\", $expectedHash)",
+          "output": "true / false"
+        }
+      ],
+      "hint": "W PHP 8 używamy typu skalarnego string, strlen() dla długości oraz hash_equals() przeciwko timing attacks.",
+      "codeTemplate": "<?php\ndeclare(strict_types=1);\n\nclass LobbyGuard\n{\n    public function verify({{0}} $token, string $expectedHash): bool\n    {\n        if ({{1}}($token) < 16) {\n            return false;\n        }\n        $computed = hash('sha256', $token);\n        return {{2}}($expectedHash, $computed);\n    }\n}",
+      "slots": [
+        {
+          "id": 0,
+          "label": "Typ argumentu $token",
+          "placeholder": "np. string",
+          "options": [
+            "string",
+            "int",
+            "array",
+            "mixed"
+          ],
+          "answer": [
+            "string"
+          ]
+        },
+        {
+          "id": 1,
+          "label": "Funkcja długości ciągu",
+          "placeholder": "np. strlen",
+          "options": [
+            "strlen",
+            "count",
+            "sizeof",
+            "substr"
+          ],
+          "answer": [
+            "strlen",
+            "mb_strlen"
+          ]
+        },
+        {
+          "id": 2,
+          "label": "Bezpieczne porównanie hashy",
+          "placeholder": "np. hash_equals",
+          "options": [
+            "hash_equals",
+            "strcmp",
+            "md5",
+            "sha1"
+          ],
+          "answer": [
+            "hash_equals"
+          ]
+        }
+      ],
+      "tokenBank": [],
+      "starterCode": "",
+      "requiredTokens": []
+    },
+    {
+      "id": "cal-php-2",
+      "title": "[PHP 8] Kolekcja i filtrowanie repozytorium (Code IDE)",
+      "language": "PHP",
+      "type": "code",
+      "difficulty": "Medium",
+      "rrReward": 35,
+      "rrPenalty": 12,
+      "expReward": 150,
+      "category": "Backend Architecture",
+      "description": "Uzupełnij metodę `getActiveBanners()` w klasie serwisowej PHP 8:\n1. Utwórz instancję kolekcji wywołując `$this->collectionFactory->create()`.\n2. Przefiltruj kolekcję metodą `addFieldToFilter('is_active', 1)`.\n3. Ustaw sortowanie metodą `setOrder('sort_order', 'ASC')` i zwróć `$collection->getItems()`.",
+      "examples": [
+        {
+          "input": "$service->getActiveBanners()",
+          "output": "array (aktywne elementy posortowane rosnąco)"
+        }
+      ],
+      "hint": "Upewnij się, że w kodzie znajdują się wywołania create(), addFieldToFilter, setOrder oraz getItems().",
+      "starterCode": "<?php\ndeclare(strict_types=1);\n\nnamespace App\\Banner\\Service;\n\nclass BannerProvider\n{\n    public function getActiveBanners(): array\n    {\n        $collection = $this->collectionFactory->create();\n        $collection->addFieldToFilter('is_active', 1);\n        $collection->setOrder('sort_order', 'ASC');\n        return $collection->getItems();\n    }\n}",
+      "solutionPreview": "<?php\ndeclare(strict_types=1);\n\nnamespace App\\Banner\\Service;\n\nclass BannerProvider\n{\n    public function getActiveBanners(): array\n    {\n        $collection = $this->collectionFactory->create();\n        $collection->addFieldToFilter('is_active', 1);\n        $collection->setOrder('sort_order', 'ASC');\n        return $collection->getItems();\n    }\n}",
+      "requiredTokens": [
+        "create()",
+        "addFieldToFilter",
+        "is_active",
+        "setOrder",
+        "getItems()"
+      ],
+      "codeTemplate": "",
+      "slots": [],
+      "tokenBank": []
+    },
+    {
+      "id": "cal-cs-1",
+      "title": "[C#] LINQ Matchmaking Filter (Luki)",
+      "language": "C#",
+      "type": "completion",
+      "difficulty": "Medium",
+      "rrReward": 32,
+      "rrPenalty": 10,
+      "expReward": 135,
+      "category": ".NET / LINQ",
+      "description": "Uzupełnij zapytanie LINQ w C#, które wybiera graczy z flagą `IsReady`, sortuje ich malejąco po `MMR` i konwertuje wynik na listę.",
+      "examples": [
+        {
+          "input": "FindReadyQueue(players)",
+          "output": "List<Player> posortowana malejąco"
+        }
+      ],
+      "hint": "W LINQ używamy metod rozszerzających Where, OrderByDescending oraz ToList.",
+      "codeTemplate": "using System.Linq;\nusing System.Collections.Generic;\n\npublic class Matchmaker\n{\n    public List<Player> FindReadyQueue(IEnumerable<Player> players)\n    {\n        return players\n            .{{0}}(p => p.IsReady)\n            .{{1}}(p => p.MMR)\n            .{{2}}();\n    }\n}",
+      "slots": [
+        {
+          "id": 0,
+          "label": "Metoda filtrująca LINQ",
+          "placeholder": "Where...",
+          "options": [
+            "Where",
+            "Select",
+            "FindAll",
+            "Filter"
+          ],
+          "answer": [
+            "Where"
+          ]
+        },
+        {
+          "id": 1,
+          "label": "Sortowanie malejące LINQ",
+          "placeholder": "OrderByDescending...",
+          "options": [
+            "OrderByDescending",
+            "OrderBy",
+            "SortDesc",
+            "Reverse"
+          ],
+          "answer": [
+            "OrderByDescending"
+          ]
+        },
+        {
+          "id": 2,
+          "label": "Materializacja do List<T>",
+          "placeholder": "ToList...",
+          "options": [
+            "ToList",
+            "ToArray",
+            "AsList",
+            "Collect"
+          ],
+          "answer": [
+            "ToList"
+          ]
+        }
+      ],
+      "tokenBank": [],
+      "starterCode": "",
+      "requiredTokens": []
+    },
+    {
+      "id": "cal-cs-2",
+      "title": "[C#] Kalkulator KDA Ratio (Code IDE)",
+      "language": "C#",
+      "type": "code",
+      "difficulty": "Medium",
+      "rrReward": 34,
+      "rrPenalty": 11,
+      "expReward": 140,
+      "category": "C# .NET / Logika",
+      "description": "Napisz metodę `CalculateKda(int kills, int deaths, int assists)` w C#, która zwraca `double`. Aby uniknąć dzielenia przez zero, użyj `Math.Max(1, deaths)` jako dzielnika dla sumy `(kills + assists)`.",
+      "examples": [
+        {
+          "input": "CalculateKda(10, 0, 5)",
+          "output": "15.0"
+        },
+        {
+          "input": "CalculateKda(8, 4, 4)",
+          "output": "3.0"
+        }
+      ],
+      "hint": "Zwróć (double)(kills + assists) / Math.Max(1, deaths);",
+      "starterCode": "using System;\n\npublic class StatsCalculator\n{\n    public double CalculateKda(int kills, int deaths, int assists)\n    {\n        return (double)(kills + assists) / Math.Max(1, deaths);\n    }\n}",
+      "solutionPreview": "using System;\n\npublic class StatsCalculator\n{\n    public double CalculateKda(int kills, int deaths, int assists)\n    {\n        return (double)(kills + assists) / Math.Max(1, deaths);\n    }\n}",
+      "requiredTokens": [
+        "CalculateKda",
+        "kills + assists",
+        "Math.Max",
+        "return"
+      ],
+      "codeTemplate": "",
+      "slots": [],
+      "tokenBank": []
+    },
+    {
+      "id": "cal-html-1",
+      "title": "[HTML5] Semantyczna Karta Meczu (Code IDE)",
+      "language": "HTML",
+      "type": "code",
+      "difficulty": "Easy",
+      "rrReward": 24,
+      "rrPenalty": 6,
+      "expReward": 90,
+      "category": "Frontend / Accessibility",
+      "description": "Stwórz strukturę HTML dla podsumowania meczu:\n1. Znacznik `<article>` z atrybutem `data-match-id=\"val-99\"`.\n2. Nagłówek `<h2>` z tekstem `Victory`.\n3. Przycisk `<button>` z atrybutem `type=\"button\"` oraz `aria-label=\"Szczegóły meczu\"`.",
+      "examples": [
+        {
+          "input": "DOM Selector: article[data-match-id=\"val-99\"] h2",
+          "output": "Victory"
+        }
+      ],
+      "starterCode": "<article data-match-id=\"val-99\">\n    <h2>Victory</h2>\n    <button type=\"button\" aria-label=\"Szczegóły meczu\">Statystyki</button>\n</article>",
+      "solutionPreview": "<article data-match-id=\"val-99\">\n    <h2>Victory</h2>\n    <button type=\"button\" aria-label=\"Szczegóły meczu\">Statystyki</button>\n</article>",
+      "domTests": {
+        "mode": "text/html",
+        "checks": [
+          {
+            "name": "Istnieje znacznik <article data-match-id=\"val-99\">",
+            "selector": "article[data-match-id=\"val-99\"]"
+          },
+          {
+            "name": "Nagłówek <h2> zawiera tekst \"Victory\"",
+            "selector": "article[data-match-id=\"val-99\"] h2",
+            "textIncludes": "Victory"
+          },
+          {
+            "name": "Przycisk posiada odpowiednie atrybuty",
+            "selector": "article button[type=\"button\"][aria-label=\"Szczegóły meczu\"]"
+          }
+        ]
+      },
+      "hint": "",
+      "codeTemplate": "",
+      "slots": [],
+      "tokenBank": [],
+      "requiredTokens": []
+    },
+    {
+      "id": "cal-html-2",
+      "title": "[HTML5] Dostępny formularz wyszukiwania (Luki)",
+      "language": "HTML",
+      "type": "completion",
+      "difficulty": "Easy",
+      "rrReward": 25,
+      "rrPenalty": 7,
+      "expReward": 95,
+      "category": "HTML5 / A11y",
+      "description": "Uzupełnij luki w semantycznym formularzu wyszukiwania gracza, aby posiadał rolę `search`, powiązany znacznik `label` (`for=\"player-tag\"`) oraz pole typu `search`.",
+      "examples": [
+        {
+          "input": "<form role=\"search\">",
+          "output": "Poprawne drzewo A11y"
+        }
+      ],
+      "codeTemplate": "<form role=\"{{0}}\">\n    <label {{1}}=\"player-tag\">Tag Gracza</label>\n    <input id=\"player-tag\" type=\"{{2}}\" required />\n</form>",
+      "slots": [
+        {
+          "id": 0,
+          "label": "Rola ARIA formularza",
+          "placeholder": "search...",
+          "options": [
+            "search",
+            "form",
+            "navigation",
+            "dialog"
+          ],
+          "answer": [
+            "search"
+          ]
+        },
+        {
+          "id": 1,
+          "label": "Atrybut łączący label z inputem",
+          "placeholder": "for...",
+          "options": [
+            "for",
+            "id",
+            "name",
+            "target"
+          ],
+          "answer": [
+            "for"
+          ]
+        },
+        {
+          "id": 2,
+          "label": "Semantyczny typ pola wyszukiwania",
+          "placeholder": "search...",
+          "options": [
+            "search",
+            "text",
+            "query",
+            "find"
+          ],
+          "answer": [
+            "search"
+          ]
+        }
+      ],
+      "hint": "",
+      "tokenBank": [],
+      "starterCode": "",
+      "requiredTokens": []
+    },
+    {
+      "id": "cal-xml-1",
+      "title": "[XML] Deklaracja bloku i ViewModelu w Layout XML (Luki)",
+      "language": "XML",
+      "type": "completion",
+      "difficulty": "Medium",
+      "rrReward": 34,
+      "rrPenalty": 10,
+      "expReward": 140,
+      "category": "Layout XML / Architecture",
+      "description": "Uzupełnij deklarację pliku layoutu XML, tak aby wstrzyknąć obiekt ViewModelu do bloku `hero.banner` poprzez węzeł `<arguments>` oraz typ `xsi:type=\"object\"`.",
+      "examples": [
+        {
+          "input": "referenceContainer name=\"content\"",
+          "output": "Poprawny węzeł block + arguments"
+        }
+      ],
+      "codeTemplate": "<?xml version=\"1.0\"?>\n<page xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n    <body>\n        <{{0}} name=\"content\">\n            <block name=\"hero.banner\" template=\"Vendor_Module::hero.phtml\">\n                <arguments>\n                    <argument name=\"view_model\" xsi:type=\"{{1}}\">Vendor\\Module\\ViewModel\\{{2}}</argument>\n                </arguments>\n            </block>\n        </{{0}}>\n    </body>\n</page>",
+      "slots": [
+        {
+          "id": 0,
+          "label": "Węzeł referencji kontenera",
+          "placeholder": "referenceContainer...",
+          "options": [
+            "referenceContainer",
+            "container",
+            "referenceBlock",
+            "move"
+          ],
+          "answer": [
+            "referenceContainer"
+          ]
+        },
+        {
+          "id": 1,
+          "label": "Typ argumentu xsi:type dla klasy",
+          "placeholder": "object...",
+          "options": [
+            "object",
+            "string",
+            "array",
+            "boolean"
+          ],
+          "answer": [
+            "object"
+          ]
+        },
+        {
+          "id": 2,
+          "label": "Nazwa klasy ViewModelu",
+          "placeholder": "HeroBanner...",
+          "options": [
+            "HeroBanner",
+            "Block",
+            "Template",
+            "Helper"
+          ],
+          "answer": [
+            "HeroBanner"
+          ]
+        }
+      ],
+      "hint": "",
+      "tokenBank": [],
+      "starterCode": "",
+      "requiredTokens": []
+    },
+    {
+      "id": "cal-xml-2",
+      "title": "[XML] Konfiguracja modułu i sekwencji zależności (Code IDE)",
+      "language": "XML",
+      "type": "code",
+      "difficulty": "Medium",
+      "rrReward": 35,
+      "rrPenalty": 11,
+      "expReward": 145,
+      "category": "XML / Konfiguracja",
+      "description": "Stwórz poprawny dokument XML z głównym węzłem `<config>`, wewnątrz którego znajduje się `<module name=\"Ranked_Core\">` posiadający podrzędny węzeł `<sequence>` z zależnością `<module name=\"Ranked_Api\"/>`.",
+      "examples": [
+        {
+          "input": "config > module[name=\"Ranked_Core\"] > sequence > module[name=\"Ranked_Api\"]",
+          "output": "PASS"
+        }
+      ],
+      "starterCode": "<?xml version=\"1.0\"?>\n<config>\n    <module name=\"Ranked_Core\">\n        <sequence>\n            <module name=\"Ranked_Api\"/>\n        </sequence>\n    </module>\n</config>",
+      "solutionPreview": "<?xml version=\"1.0\"?>\n<config>\n    <module name=\"Ranked_Core\">\n        <sequence>\n            <module name=\"Ranked_Api\"/>\n        </sequence>\n    </module>\n</config>",
+      "domTests": {
+        "mode": "application/xml",
+        "checks": [
+          {
+            "name": "Istnieje węzeł module[name=\"Ranked_Core\"]",
+            "selector": "config > module[name=\"Ranked_Core\"]"
+          },
+          {
+            "name": "Istnieje sekcja <sequence> z modułem Ranked_Api",
+            "selector": "module[name=\"Ranked_Core\"] > sequence > module[name=\"Ranked_Api\"]"
+          }
+        ]
+      },
+      "hint": "",
+      "codeTemplate": "",
+      "slots": [],
+      "tokenBank": [],
+      "requiredTokens": []
+    },
+    {
+      "id": "cal-gql-1",
+      "title": "[GraphQL] Zapytanie o profil z argumentem (Luki)",
+      "language": "GraphQL",
+      "type": "completion",
+      "difficulty": "Easy",
+      "rrReward": 28,
+      "rrPenalty": 8,
+      "expReward": 115,
+      "category": "GraphQL / API",
+      "description": "Uzupełnij zapytanie GraphQL `GetPlayerProfile`, które przyjmuje obowiązkową zmienną `$id: ID!`, przekazuje ją do pola `player(id: $id)` i pobiera pola `nickname` oraz `rr`.",
+      "examples": [
+        {
+          "input": "Variables: { \"id\": \"player-01\" }",
+          "output": "{ \"data\": { \"player\": { \"nickname\": \"Ace\", \"rr\": 1450 } } }"
+        }
+      ],
+      "codeTemplate": "{{0}} GetPlayerProfile($id: {{1}}) {\n    player(id: {{2}}) {\n        nickname\n        rr\n        rankTitle\n    }\n}",
+      "slots": [
+        {
+          "id": 0,
+          "label": "Typ operacji odczytu",
+          "placeholder": "query...",
+          "options": [
+            "query",
+            "mutation",
+            "subscription",
+            "fragment"
+          ],
+          "answer": [
+            "query"
+          ]
+        },
+        {
+          "id": 1,
+          "label": "Typ wymaganej zmiennej ID",
+          "placeholder": "ID!...",
+          "options": [
+            "ID!",
+            "String",
+            "Int",
+            "Boolean!"
+          ],
+          "answer": [
+            "ID!",
+            "String!"
+          ]
+        },
+        {
+          "id": 2,
+          "label": "Przekazana zmienna",
+          "placeholder": "$id...",
+          "options": [
+            "$id",
+            "id",
+            "@id",
+            "#id"
+          ],
+          "answer": [
+            "$id"
+          ]
+        }
+      ],
+      "hint": "",
+      "tokenBank": [],
+      "starterCode": "",
+      "requiredTokens": []
+    },
+    {
+      "id": "cal-gql-2",
+      "title": "[GraphQL] Mutacja aktualizacji rangi (Code IDE)",
+      "language": "GraphQL",
+      "type": "code",
+      "difficulty": "Medium",
+      "rrReward": 34,
+      "rrPenalty": 10,
+      "expReward": 135,
+      "category": "GraphQL Mutations",
+      "description": "Napisz mutację `mutation UpdateMatchResult($matchId: ID!, $rrDelta: Int!)`, która wywołuje pole `updateMatchResult(matchId: $matchId, rrDelta: $rrDelta)` i zwraca pola `success` oraz `newRR`.",
+      "examples": [
+        {
+          "input": "mutation UpdateMatchResult",
+          "output": "{ success, newRR }"
+        }
+      ],
+      "starterCode": "mutation UpdateMatchResult($matchId: ID!, $rrDelta: Int!) {\n    updateMatchResult(matchId: $matchId, rrDelta: $rrDelta) {\n        success\n        newRR\n    }\n}",
+      "solutionPreview": "mutation UpdateMatchResult($matchId: ID!, $rrDelta: Int!) {\n    updateMatchResult(matchId: $matchId, rrDelta: $rrDelta) {\n        success\n        newRR\n    }\n}",
+      "requiredTokens": [
+        "mutation",
+        "UpdateMatchResult",
+        "$matchId",
+        "$rrDelta",
+        "updateMatchResult",
+        "success",
+        "newRR"
+      ],
+      "hint": "",
+      "codeTemplate": "",
+      "slots": [],
+      "tokenBank": []
+    },
+    {
+      "id": "cal-sql-1",
+      "title": "[SQL] Ranking Top 10 Graczy (Luki)",
+      "language": "SQL",
+      "type": "completion",
+      "difficulty": "Easy",
+      "rrReward": 28,
+      "rrPenalty": 8,
+      "expReward": 110,
+      "category": "SQL / Agregacje",
+      "description": "Uzupełnij zapytanie SQL, które wybiera graczy z liczbą rozegranych meczów >= 10, sortuje ich malejąco po `rr` i ogranicza wynik do 10 rekordów.",
+      "examples": [
+        {
+          "input": "Tabela players (nickname, rr, matches_played)",
+          "output": "Top 10 wierszy wg RR DESC"
+        }
+      ],
+      "codeTemplate": "SELECT nickname, rr, matches_played\nFROM players\n{{0}} matches_played >= 10\nORDER BY rr {{1}}\n{{2}} 10;",
+      "slots": [
+        {
+          "id": 0,
+          "label": "Klauzula filtrująca wiersze",
+          "placeholder": "WHERE...",
+          "options": [
+            "WHERE",
+            "HAVING",
+            "GROUP BY",
+            "FILTER"
+          ],
+          "answer": [
+            "WHERE"
+          ]
+        },
+        {
+          "id": 1,
+          "label": "Kierunek sortowania malejącego",
+          "placeholder": "DESC...",
+          "options": [
+            "DESC",
+            "ASC",
+            "DOWN",
+            "TOP"
+          ],
+          "answer": [
+            "DESC"
+          ]
+        },
+        {
+          "id": 2,
+          "label": "Ograniczenie liczby wierszy",
+          "placeholder": "LIMIT...",
+          "options": [
+            "LIMIT",
+            "TOP",
+            "FETCH",
+            "TAKE"
+          ],
+          "answer": [
+            "LIMIT"
+          ]
+        }
+      ],
+      "hint": "",
+      "tokenBank": [],
+      "starterCode": "",
+      "requiredTokens": []
+    },
+    {
+      "id": "cal-sql-2",
+      "title": "[SQL] Statystyki klanów z JOIN i HAVING (Code IDE)",
+      "language": "SQL",
+      "type": "code",
+      "difficulty": "Hard",
+      "rrReward": 42,
+      "rrPenalty": 15,
+      "expReward": 180,
+      "category": "SQL / Raportowanie",
+      "description": "Napisz zapytanie SQL łączące tabelę `clans c` z `players p` (`INNER JOIN players p ON p.clan_id = c.id`), grupujące po `c.name` (`GROUP BY c.name`), obliczające `COUNT(p.id)` oraz `AVG(p.rr)` dla klanów mających co najmniej 5 członków (`HAVING COUNT(p.id) >= 5`).",
+      "examples": [
+        {
+          "input": "clans + players",
+          "output": "name | member_count | avg_rr"
+        }
+      ],
+      "starterCode": "SELECT \n    c.name,\n    COUNT(p.id) AS member_count,\n    ROUND(AVG(p.rr), 0) AS avg_rr\nFROM clans c\nINNER JOIN players p ON p.clan_id = c.id\nGROUP BY c.name\nHAVING COUNT(p.id) >= 5\nORDER BY avg_rr DESC;",
+      "solutionPreview": "SELECT \n    c.name,\n    COUNT(p.id) AS member_count,\n    ROUND(AVG(p.rr), 0) AS avg_rr\nFROM clans c\nINNER JOIN players p ON p.clan_id = c.id\nGROUP BY c.name\nHAVING COUNT(p.id) >= 5\nORDER BY avg_rr DESC;",
+      "requiredTokens": [
+        "SELECT",
+        "INNER JOIN",
+        "GROUP BY",
+        "HAVING",
+        "COUNT",
+        "AVG"
+      ],
+      "hint": "",
+      "codeTemplate": "",
+      "slots": [],
+      "tokenBank": []
+    }
+  ]
+}

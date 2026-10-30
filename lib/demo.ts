@@ -1,0 +1,6 @@
+import type { Challenge } from "./types";
+export const demoChallenges: Challenge[] = [
+  { id: "00000000-0000-4000-8000-000000000001", title: "Two Sum: Ranked Queue", difficulty: "Easy", description: "Return the indices of two numbers that add up to target. Exactly one valid answer exists.", initial_code: "function solve(nums, target) {\n  // lock in your answer\n  \n}", test_cases: [{ input: "[[2,7,11,15],9]", expected: "[0,1]" }, { input: "[[3,2,4],6]", expected: "[1,2]" }] },
+  { id: "00000000-0000-4000-8000-000000000002", title: "Longest Win Streak", difficulty: "Medium", description: "Given an array of match results, return the longest consecutive run of wins.", initial_code: "function solve(results) {\n  // W = win, L = loss\n  \n}", test_cases: [{ input: "[[\"W\",\"W\",\"L\",\"W\"]]", expected: "2" }, { input: "[[\"W\",\"W\",\"W\"]]", expected: "3" }] },
+  { id: "00000000-0000-4000-8000-000000000003", title: "Balanced Matchmaking", difficulty: "Hard", description: "Return true when the difference between the highest and lowest player rating is at most 100.", initial_code: "function solve(ratings) {\n  \n}", test_cases: [{ input: "[[1200,1250,1299]]", expected: "true" }, { input: "[[900,1200]]", expected: "false" }] }
+];
