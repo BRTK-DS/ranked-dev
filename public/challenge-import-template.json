@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "challenges": [
+    {
+      "type": "code",
+      "title": "Suma dodatnich liczb",
+      "description": "Dostajesz tablicę liczb. Zwróć sumę wyłącznie liczb większych od zera. Puste dane mają zwrócić 0.",
+      "difficulty": "Easy",
+      "initial_code": "function solve(numbers) {\n  // Zwróć sumę dodatnich liczb\n  \n}",
+      "tests_per_run": 3,
+      "test_cases": [
+        { "input": "[[1,-2,3]]", "expected": "4" },
+        { "input": "[[-5,-1]]", "expected": "0" },
+        { "input": "[[10,20,30]]", "expected": "60" },
+        { "input": "[[]]", "expected": "0" },
+        { "input": "[[0,5,-5,8]]", "expected": "13" }
+      ]
+    },
+    {
+      "type": "completion",
+      "title": "Uzupełnij filtrowanie użytkowników",
+      "description": "Uzupełnij trzy luki tak, aby kod wybrał wyłącznie aktywnych użytkowników i zwrócił ich nazwy.",
+      "difficulty": "Easy",
+      "completion": {
+        "template": "function activeNames(users) {\n  return users.{{0}}(user => user.{{1}}).{{2}}(user => user.name);\n}",
+        "blanks": [
+          { "slot": 0, "label": "Metoda filtrująca tablicę", "placeholder": "np. filter", "accepted": ["filter"] },
+          { "slot": 1, "label": "Pole oznaczające aktywność", "placeholder": "np. active", "accepted": ["active", "isActive"] },
+          { "slot": 2, "label": "Metoda zmieniająca elementy", "placeholder": "np. map", "accepted": ["map"] }
+        ]
+      }
+    }
+  ]
+}

@@ -45,6 +45,7 @@ export function Arena() {
   const [selected, setSelected] = useState(demoChallenges[0]);
   const [code, setCode] = useState(demoChallenges[0].initial_code);
   const [results, setResults] = useState<TestResult[]>([]);
+  const [completionValues, setCompletionValues] = useState<Record<number, string>>({});
   const [consoleLines, setConsoleLines] = useState<string[]>([
     "Konsola jest gotowa. Kliknij Run tests albo użyj Ctrl+Enter.",
   ]);
@@ -84,6 +85,7 @@ export function Arena() {
     setSelected(item);
     setCode(item.initial_code);
     setResults([]);
+    setCompletionValues({});
     setConsoleLines([
       "Konsola wyczyszczona. Uruchom testy dla nowego zadania.",
     ]);
@@ -91,6 +93,19 @@ export function Arena() {
   function runTests() {
     const started = performance.now();
     const logs: string[] = ["> Uruchamiam testy publiczne..."];
+    if (selected.challenge_type === "completion" && selected.completion_config) {
+      const next = selected.completion_config.blanks.map((blank, index) => {
+        const value = (completionValues[blank.slot] ?? "").trim();
+        const ok = blank.accepted.some((answer) => answer.trim() === value);
+        logs.push(`Luka ${index + 1} (${blank.label}): ${ok ? "PASS ✓" : "FAIL ✗"}`);
+        return { ok, label: `${blank.label}: ${ok ? "poprawnie" : "spróbuj ponownie"}`, time: 0 };
+      });
+      setConsoleLines(logs);
+      setResults(next);
+      const passed = next.every((item) => item.ok);
+      setCombo(passed ? combo + 1 : 0);
+      return passed;
+    }
     const format = (value: unknown) => {
       try {
         return JSON.stringify(value) ?? String(value);
@@ -120,7 +135,10 @@ export function Arena() {
       setResults([{ ok: false, label: "Kod nie uruchomił się", time: 0 }]);
       return false;
     }
-    const next = selected.test_cases.map((test, index) => {
+    const randomizedTests = [...selected.test_cases]
+      .sort(() => Math.random() - 0.5)
+      .slice(0, Math.max(1, Math.min(selected.tests_per_run ?? 2, selected.test_cases.length)));
+    const next = randomizedTests.map((test, index) => {
       try {
         const args = JSON.parse(test.input) as unknown[];
         logs.push("", `--- TEST ${index + 1} ---`);
@@ -176,6 +194,13 @@ export function Arena() {
     }
   }
   const xpProgress = useMemo(() => ((profile?.xp ?? 0) % 500) / 5, [profile]);
+  const completionCode = useMemo(() => {
+    if (!selected.completion_config) return selected.initial_code;
+    return selected.completion_config.blanks.reduce(
+      (output, blank) => output.replaceAll(`{{${blank.slot}}}`, completionValues[blank.slot] || `___${blank.slot + 1}___`),
+      selected.completion_config.template,
+    );
+  }, [selected, completionValues]);
   return (
     <main className="min-h-screen bg-zinc-950">
       <header className="sticky top-0 z-30 border-b border-zinc-800 bg-zinc-950/95 backdrop-blur-xl">
@@ -415,7 +440,22 @@ export function Arena() {
                 RANKED.DEV IDE
               </span>
             </div>
-            <CodeEditor value={code} onChange={setCode} onRun={runTests} />
+            {selected.challenge_type === "completion" && selected.completion_config ? (
+              <div className="grid gap-4 bg-zinc-950 p-4 lg:grid-cols-[280px_1fr]">
+                <div className="space-y-3">
+                  <p className="text-xs font-bold uppercase tracking-wider text-zinc-500">Uzupełnij luki</p>
+                  {selected.completion_config.blanks.map((blank) => (
+                    <label key={blank.slot} className="block space-y-1.5 text-xs text-zinc-400">
+                      {blank.slot + 1}. {blank.label}
+                      <input value={completionValues[blank.slot] ?? ""} onChange={(event) => setCompletionValues((current) => ({ ...current, [blank.slot]: event.target.value }))} placeholder={blank.placeholder ?? "Wpisz odpowiedź"} className="h-10 w-full rounded-lg border bg-zinc-900 px-3 font-mono text-sm text-zinc-100 outline-none focus:border-emerald-400" />
+                    </label>
+                  ))}
+                </div>
+                <pre className="min-h-64 overflow-auto rounded-lg border bg-[#09090b] p-4 font-mono text-sm leading-6 text-zinc-300">{completionCode}</pre>
+              </div>
+            ) : (
+              <CodeEditor value={code} onChange={setCode} onRun={runTests} />
+            )}
             <div className="border-t border-zinc-800 bg-zinc-950">
               <div className="flex items-center justify-between border-b border-zinc-800 px-4 py-2">
                 <div className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-wider text-zinc-400">
